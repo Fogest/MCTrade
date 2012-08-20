@@ -1,0 +1,16 @@
+name: MCTrade
+main: me.fogest.mctrade.MCTrade
+version: 0.1
+website: http://fogest.net16.net
+author: Fogest
+
+
+description: >
+             Makes trading a tad bit easier
+commands:
+  mctrade:
+    description: Used to start a trade
+    aliases: [mct]
+    usage: |
+           /mct
+
