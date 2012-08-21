@@ -40,6 +40,13 @@ public class CommExec implements CommandExecutor {
 			}
 			return true;
 		}
+		if (command.getName().equalsIgnoreCase("trade")) {
+			if (!(sender instanceof Player)) {
+				sender.sendMessage("Y U NO PLAYER??!111");
+				return true;
+			}
+			return true;
+		}
 		return false;
 	}
 }
