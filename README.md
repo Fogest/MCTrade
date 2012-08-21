@@ -1,0 +1,1 @@
+Make sure you have a lib folder with craftbukkit.jar inside of it.
