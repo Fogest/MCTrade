@@ -1,8 +1,6 @@
 /*
  * MCTrade - by Fogest
  * http://fogest.net16.net
- *
- * powered by Kickstarter
  */
 
 package me.fogest.mctrade;
@@ -27,11 +25,11 @@ public class MCTrade extends JavaPlugin{
 	
 	@Override
 	public void onEnable(){
-		log = Logger.getLogger("Minecraft");
 		description = getDescription();
 		prefix = "["+description.getName()+"] ";
 
 		log("loading "+description.getFullName());
+		getLogger().info("loading "+description.getFullName());
 
 		listenerPlayer = new Listener_Player(this);
 		listenerServer = new Listener_Server(this);
