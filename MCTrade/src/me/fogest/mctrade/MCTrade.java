@@ -2,7 +2,7 @@ package me.fogest.mctrade;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import me.fogest.mctrade.commands.CommExec;
-import me.fogest.mctrade.listeners.Listener;
+import me.fogest.mctrade.listeners.Chat;
 
 public class MCTrade extends JavaPlugin {
 
@@ -10,9 +10,9 @@ public class MCTrade extends JavaPlugin {
 	public void onEnable() {
 
 		// Registering the listeners (with the new 1.3 API)
-		getPluginManager().createRegisteredListeners(new Listener(this), this);
+		getServer().getPluginManager().registerEvents(new Chat(this), this);
 
 		// Registering the command executors
-		getCommand("mctrade").setExecutor(new CommandExecutor_Mctrade(this));
+		getCommand("mctrade").setExecutor(new CommExec(this));
 	}
 }
