@@ -33,5 +33,6 @@ public class MCTrade extends JavaPlugin {
 
 		// Registering the command executors
 		getCommand("mctrade").setExecutor(new CommExec(this));
+		getCommand("trade").setExecutor(new CommExec(this));
 	}
 }
