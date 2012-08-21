@@ -5,7 +5,6 @@ version: 0.1
 website: http://fogest.net16.net
 author: Fogest
 
-
 commands:
   mctrade:
     description: Used to start a trade
