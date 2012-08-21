@@ -21,7 +21,7 @@ package me.fogest.mctrade;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.fogest.mctrade.commands.CommExec;
 import me.fogest.mctrade.listeners.Chat;
-
+//test commit
 
 public class MCTrade extends JavaPlugin {
 
