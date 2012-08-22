@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
-import org.sqlite.SQLite;
 
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.SQLibrary.*;
