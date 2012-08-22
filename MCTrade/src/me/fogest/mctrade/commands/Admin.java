@@ -16,23 +16,30 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-package me.fogest.mctrade;
+package me.fogest.mctrade.commands;
 
-import org.bukkit.plugin.java.JavaPlugin;
-import me.fogest.mctrade.commands.Admin;
-import me.fogest.mctrade.commands.Player;
-import me.fogest.mctrade.listeners.Chat;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-public class MCTrade extends JavaPlugin {
+import me.fogest.mctrade.MCTrade;
 
-	@Override
-	public void onEnable() {
+public class Admin implements CommandExecutor {
+	private MCTrade plugin;
 
-		// Registering the listeners (with the new 1.3 API)
-		getServer().getPluginManager().registerEvents(new Chat(this), this);
+	public Admin(final MCTrade plugin) {
+		this.plugin = plugin;
+	}
 
-		// Registering the command executors
-		getCommand("mctrade").setExecutor(new Admin(this));
-		getCommand("trade").setExecutor(new Player(this));
+	public boolean onCommand(final CommandSender sender, final Command command,
+	final String label, final String[] args) {
+		if (!command.getName().equalsIgnoreCase("trade"))
+			return false;
+		if (!(sender instanceof Player)) {
+				sender.sendMessage("Y U NO PLAYER??!111");
+				return false;
+			}
+		return true;
 	}
 }

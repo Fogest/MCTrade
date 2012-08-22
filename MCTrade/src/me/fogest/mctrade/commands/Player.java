@@ -25,28 +25,21 @@ import org.bukkit.entity.Player;
 
 import me.fogest.mctrade.MCTrade;
 
-public class CommExec implements CommandExecutor {
+public class Player implements CommandExecutor {
 	private MCTrade plugin;
 
-	public CommExec(final MCTrade plugin) {
+	public Player(final MCTrade plugin) {
 		this.plugin = plugin;
 	}
 
-	public boolean onCommand(CommandSender sender, Command command,String label, String[] args) {
-		if (command.getName().equalsIgnoreCase("mctrade")) {
-			if (!(sender instanceof Player)) {
-				sender.sendMessage("Y U NO PLAYER??!111");
-				return true;
-			}
-			return true;
+	public boolean onCommand(final CommandSender sender, final Command command,
+	final String label, String[] args) {
+		if (!command.getName().equalsIgnoreCase("mctrade"))
+			return false;
+		if (!(sender instanceof Player)) {
+			sender.sendMessage("Y U NO PLAYER??!111");
+			return false;
 		}
-		if (command.getName().equalsIgnoreCase("trade")) {
-			if (!(sender instanceof Player)) {
-				sender.sendMessage("Y U NO PLAYER??!111");
-				return true;
-			}
-			return true;
-		}
-		return false;
+		return true;
 	}
 }
