@@ -18,11 +18,10 @@
 
 package me.fogest.mctrade.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import me.fogest.mctrade.MCTrade;
 
 public class PlayerCommands implements CommandExecutor {
@@ -38,6 +37,18 @@ public class PlayerCommands implements CommandExecutor {
 			if(sender.hasPermission("mctrade.mctrade")) {
 				plugin.getLogger().info("Console: MCTrade Works");
 				sender.sendMessage("Player: MCTrade Works");
+				
+				if(args.length < 1 || args.length > 2) {
+					sender.sendMessage(ChatColor.RED + "Command Usage : /mctrade <costPerItem> [Amount]. The item in your hand is the item being traded!");
+				}
+				else if(args.length == 1) {
+					sender.sendMessage(ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item and you are selling ");
+					plugin.getLogger().info("Player " + sender + " has created a trade with the following info: Price:" + args[0] + "Item Amount: ");
+				}
+				else if(args.length == 2) {
+					
+				}
+				
 				return true;
 			}
 		}

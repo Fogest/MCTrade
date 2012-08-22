@@ -18,6 +18,7 @@
 
 package me.fogest.mctrade.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,6 +39,8 @@ public class Admin implements CommandExecutor {
 			if(sender.hasPermission("mctrade.trade")) {
 				plugin.getLogger().info("Console: Trade Works");
 				sender.sendMessage("Player: Trade Works");
+				
+				plugin.getLogger().info("Console: Trade Works");
 				return true;
 			}
 		}
