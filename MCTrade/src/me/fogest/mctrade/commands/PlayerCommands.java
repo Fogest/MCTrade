@@ -53,7 +53,7 @@ public class PlayerCommands implements CommandExecutor {
 					setItemAmount(player.getItemInHand().getAmount());
 					setItemMaterial(player.getItemInHand().getType());
 					
-					sender.sendMessage(ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
+					sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
 					plugin.getLogger().info("Player " + sender.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial() + " Item ID: " + getItemId());
 				}
 				else if(args.length == 2) {

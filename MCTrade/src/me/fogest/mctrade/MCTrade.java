@@ -34,5 +34,8 @@ public class MCTrade extends JavaPlugin {
 		// Registering the command executors
 		getCommand("mctrade").setExecutor(new PlayerCommands(this));
 		getCommand("trade").setExecutor(new Admin(this));
+		
+		Database db = new Database("localhost","root","","mctrade","3306");
+		
 	}
 }
