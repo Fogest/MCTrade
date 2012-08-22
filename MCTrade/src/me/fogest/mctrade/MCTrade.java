@@ -32,7 +32,7 @@ public class MCTrade extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new Chat(this), this);
 
 		// Registering the command executors
-		getCommand("mctrade").setExecutor(new Admin(this));
-		getCommand("trade").setExecutor(new PlayerCommands(this));
+		getCommand("mctrade").setExecutor(new PlayerCommands(this));
+		getCommand("trade").setExecutor(new Admin(this));
 	}
 }
