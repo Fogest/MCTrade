@@ -36,8 +36,8 @@ public class PlayerCommands implements CommandExecutor {
 	String cmdLabel, String[] args) {
 		if (cmdLabel.equalsIgnoreCase("mctrade")) {
 			if(sender.hasPermission("mctrade.mctrade")) {
-				plugin.getLogger().info("Console: Works");
-				sender.sendMessage("Player: Works");
+				plugin.getLogger().info("Console: MCTrade Works");
+				sender.sendMessage("Player: MCTrade Works");
 				return true;
 			}
 		}

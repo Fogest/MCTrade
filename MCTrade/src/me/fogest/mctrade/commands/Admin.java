@@ -33,13 +33,14 @@ public class Admin implements CommandExecutor {
 	}
 
 	public boolean onCommand(final CommandSender sender, final Command command,
-	final String label, final String[] args) {
-		if (!command.getName().equalsIgnoreCase("trade"))
-			return false;
-		if (!(sender instanceof Player)) {
-				sender.sendMessage("Y U NO PLAYER??!111");
-				return false;
+	final String cmdLabel, final String[] args) {
+		if (cmdLabel.equalsIgnoreCase("trade")) {
+			if(sender.hasPermission("mctrade.trade")) {
+				plugin.getLogger().info("Console: Trade Works");
+				sender.sendMessage("Player: Trade Works");
+				return true;
 			}
-		return true;
+		}
+		return false;
 	}
 }
