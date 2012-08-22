@@ -39,7 +39,6 @@ public class MCTrade extends JavaPlugin {
             log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
             pm.disablePlugin(this);
         }
-        DatabaseManager.getDatabase().populateRequestMap();
 		
 	}
 }
