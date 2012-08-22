@@ -24,7 +24,7 @@ import me.fogest.mctrade.commands.PlayerCommands;
 import me.fogest.mctrade.listeners.Chat;
 
 public class MCTrade extends JavaPlugin {
-
+	private static MCTrade plugin;
 	@Override
 	public void onEnable() {
 
@@ -41,4 +41,7 @@ public class MCTrade extends JavaPlugin {
         }
 		
 	}
+    public static MCTrade getPlugin(){
+        return plugin;
+    }
 }

@@ -7,19 +7,20 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 
 import org.bukkit.Location;
+import org.sqlite.SQLite;
 
-import com.nyancraft.reportrts.data.HelpRequest;
-import com.nyancraft.reportrts.ReportRTS;
-import lib.PatPeter.SQLibrary.*;
+import me.fogest.mctrade.MCTrade;
+import me.fogest.mctrade.SQLibrary.*;
 
 public class DatabaseManager {
-    public static File dbFolder = new File("plugins/ReportRTS");
+    public static File dbFolder = new File("plugins/MCTrade");
 
-    public static SQLite db = new SQLite(ReportRTS.getPlugin().getLogger(), "[ReportRTS]", "ReportRTS", dbFolder.getPath());
+    public static SQLite db = new SQLite(MCTrade.getPlugin().getLogger(), "[MCTrade]", "MCTrade", dbFolder.getPath());
 
     /**
      * Initializes, opens and confirms the tables and database.
      */
+    
     public static void enableDB(){
         db.initialize();
         db.open();
@@ -31,51 +32,9 @@ public class DatabaseManager {
      */
     public static void disableDB(){ if(db.checkConnection()) db.close(); }
 
-    /**
-     * Gets number of open requests from the database and puts them into the requestMap.
-     * @return Integer amount of requests
-     */
-    public static int getOpenRequests(){
-
-        if(!db.checkConnection()) return 0;
-        int openRequests = 0;
-
-        try {
-            ResultSet result = db.query("SELECT * FROM reportrts_request as request INNER JOIN reportrts_user as user ON request.user_id = user.id WHERE `status` < 2");
-            while(result.next()){
-                ReportRTS.getPlugin().requestMap.put(result.getInt(1), new HelpRequest(result.getString("name"), result.getInt(1), result.getLong("tstamp"), result.getString("text"), result.getInt("status"), result.getInt("x"), result.getInt("y"), result.getInt("z"), result.getFloat("yaw"), result.getFloat("pitch"), result.getString("world")));
-            }
-            result.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return openRequests;
-    }
-
-    /**
-     * Gets number of held requests from the database.
-     * @return Integer amount of requests
-     */
-    public static int getHeldRequests(){
-
-        if(!db.checkConnection()) return 0;
-        int heldRequests = 0;
-
-        try {
-            ResultSet result = db.query("SELECT `id` FROM `reportrts_request` WHERE `status` = 2");
-            while(result.next()){
-                heldRequests++;
-            }
-            result.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return heldRequests;
-    }
-
     private static void confirmTables(){
-        if(!db.checkTable("reportrts_request")){
-            String queryString = "CREATE TABLE reportrts_request (id integer primary key,"
+        if(!db.checkTable("MCTrade_request")){
+            String queryString = "CREATE TABLE MCTrade_request (id integer primary key,"
                     + " user_id integer no null,"
                     + " mod_id integer,"
                     + " mod_timestamp bigint,"
@@ -90,21 +49,21 @@ public class DatabaseManager {
                     + " notified_of_completion integer)";
             try {
                 db.query(queryString);
-                ReportRTS.getPlugin().getLogger().log(Level.INFO, "Successfully created the requests table.");
+                MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the requests table.");
             } catch (Exception e) {
-                ReportRTS.getPlugin().getLogger().log(Level.SEVERE, "Unable to create the requests table.");
+                MCTrade.getPlugin().getLogger().log(Level.SEVERE, "Unable to create the requests table.");
                 e.printStackTrace();
             }
         }
-        if(!db.checkTable("reportrts_user")){
-            String queryString = "CREATE TABLE reportrts_user (id integer primary key,"
+        if(!db.checkTable("MCTrade_user")){
+            String queryString = "CREATE TABLE MCTrade_user (id integer primary key,"
                     + " name varchar(255) not null,"
                     + " banned integer)";
             try {
                 db.query(queryString);
-                ReportRTS.getPlugin().getLogger().log(Level.INFO, "Successfully created the users table.");
+                MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the users table.");
             } catch (Exception e) {
-                ReportRTS.getPlugin().getLogger().log(Level.SEVERE, "Unable to create the users table.");
+                MCTrade.getPlugin().getLogger().log(Level.SEVERE, "Unable to create the users table.");
                 e.printStackTrace();
             }
         }
@@ -114,7 +73,7 @@ public class DatabaseManager {
         if(!db.checkConnection()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `id` FROM `reportrts_user` WHERE `name` = ?");
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `id` FROM `MCTrade_user` WHERE `name` = ?");
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
             userId = !rs.isBeforeFirst() ? createUser(player) : rs.getInt("id");
@@ -130,11 +89,11 @@ public class DatabaseManager {
         if(!db.checkConnection()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO `reportrts_user` (`name`, `banned`) VALUES (?, '0')");
+            PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO `MCTrade_user` (`name`, `banned`) VALUES (?, '0')");
             ps.setString(1, player);
             if(ps.executeUpdate() < 1) return 0;
             ps.close();
-            ps = db.getConnection().prepareStatement("SELECT `id` FROM `reportrts_user` WHERE `name` = ?");
+            ps = db.getConnection().prepareStatement("SELECT `id` FROM `MCTrade_user` WHERE `name` = ?");
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
 
@@ -156,17 +115,17 @@ public class DatabaseManager {
      * @param message String help request message
      * @return True if successful.
      */
-    public static boolean fileRequest(String player, String world, Location location, String message, int userId){
+    public static boolean createTrade(String player, String world, Location location, String message, int userId){
         if(!db.checkConnection() || userId == 0) return false;
         long tstamp = System.currentTimeMillis()/1000;
         try {
-            ResultSet rs = db.query("SELECT `banned` FROM reportrts_user WHERE `id` = '" + userId + "'");
+            ResultSet rs = db.query("SELECT `banned` FROM MCTrade_user WHERE `id` = '" + userId + "'");
             if(rs.getInt("banned") == 1){
                 rs.close();
                 return false;
             }
             rs.close();
-            PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO `reportrts_request` (`user_id`, `tstamp`, `world`, `x`, `y`, `z`," +
+            PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO `MCTrade_request` (`user_id`, `tstamp`, `world`, `x`, `y`, `z`," +
                     " `text`, `status`, `notified_of_completion`) VALUES" +
                     " (?, ?, ?, ?, ?, ?, ?, '0', '0')");
             ps.setInt(1, userId);
@@ -185,10 +144,10 @@ public class DatabaseManager {
         return true;
     }
 
-    public static int getlatestTicketIdByUser(String player, int userId){
+    public static int getTicketById(int tradeId){
         if(!db.checkConnection()) return 0;
         int ticketId = 0;
-        ResultSet result = db.query("SELECT `id` FROM `reportrts_request` WHERE `user_id` = '" + userId + "' ORDER BY `tstamp` DESC LIMIT 1");
+        ResultSet result = db.query("SELECT `id` FROM `MCTrade_request` WHERE `user_id` = '" + userId + "' ORDER BY `tstamp` DESC LIMIT 1");
         try {
             ticketId = result.getInt("id");
             result.close();
@@ -204,9 +163,9 @@ public class DatabaseManager {
      * @param name
      * @return true if successful
      */
-    public static boolean setRequestStatus(int id, String name, int status){
+    public static String getOpenTrades(String player){
         if(!db.checkConnection()) return false;
-        ResultSet rs = db.query("SELECT `status` FROM reportrts_request WHERE `id` = " + id);
+        ResultSet rs = db.query("SELECT `status` FROM MCTrade_request WHERE `id` = " + id);
         try {
             if(!rs.isBeforeFirst()) return false;
             if(rs.getInt("status") == status) {
@@ -220,7 +179,7 @@ public class DatabaseManager {
         }
         int modId = getUserIdCreateIfNotExists(name);
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("UPDATE reportrts_request SET `status` = ?, mod_id = ?, mod_timestamp = ? WHERE `id` = ?");
+            PreparedStatement ps = db.getConnection().prepareStatement("UPDATE MCTrade_request SET `status` = ?, mod_id = ?, mod_timestamp = ? WHERE `id` = ?");
             ps.setInt(1, status);
             ps.setInt(2, modId);
             ps.setLong(3, System.currentTimeMillis() / 1000);
@@ -230,9 +189,9 @@ public class DatabaseManager {
                 return false;
             }
             ps.close();
-            //db.query("UPDATE reportrts_request SET `status` = '" + status + "', mod_id = '" + modId + "', mod_timestamp = '" + System.currentTimeMillis() / 1000 + "' WHERE `id` = " + id).close();
+            //db.query("UPDATE MCTrade_request SET `status` = '" + status + "', mod_id = '" + modId + "', mod_timestamp = '" + System.currentTimeMillis() / 1000 + "' WHERE `id` = " + id).close();
 
-            ResultSet result = db.query("SELECT `status` FROM `reportrts_request` WHERE `id` = " + id);
+            ResultSet result = db.query("SELECT `status` FROM `MCTrade_request` WHERE `id` = " + id);
             if(result.getInt("status") != status){
                 result.close();
                 return false;
@@ -245,29 +204,10 @@ public class DatabaseManager {
         return true;
     }
 
-    public static boolean setUserStatus(String player, int status){
-        int userId = getUserIdCreateIfNotExists(player);
-
-        ResultSet result = db.query("SELECT `banned` FROM reportrts_user WHERE `id` = '" + userId + "'");
-
-        try {
-            int banned = result.getInt("banned");
-            result.close();
-            if(banned == status) return false;
-            PreparedStatement ps = db.getConnection().prepareStatement("UPDATE reportrts_user SET `banned` = '" + status + "' WHERE `id` = ?");
-            ps.setInt(1, userId);
-            if(ps.executeUpdate() < 1) return false;
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 
     public static boolean resetDB(){
-        db.query("DELETE FROM reportrts_request");
-        db.query("DELETE FROM reportrts_user");
+        db.query("DELETE FROM MCTrade_request");
+        db.query("DELETE FROM MCTrade_user");
         return true;
     }
 }
