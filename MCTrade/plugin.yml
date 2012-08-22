@@ -10,7 +10,7 @@ commands:
     description: Used to start a trade
     aliases: [mct]
   trade:
-    description: USed to perform administrative commands
+    description: Used to perform administrative commands
 
 permissions:
   mctrade.*:
