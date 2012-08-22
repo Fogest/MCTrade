@@ -19,14 +19,20 @@
 package me.fogest.mctrade.commands;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import me.fogest.mctrade.MCTrade;
 
 public class PlayerCommands implements CommandExecutor {
 	private MCTrade plugin;
-
+	private int itemId;
+	private int itemAmount;
+	private Material itemMaterial;
+	
+	
 	public PlayerCommands(final MCTrade plugin) {
 		this.plugin = plugin;
 	}
@@ -42,16 +48,45 @@ public class PlayerCommands implements CommandExecutor {
 					sender.sendMessage(ChatColor.RED + "Command Usage : /mctrade <costPerItem> [Amount]. The item in your hand is the item being traded!");
 				}
 				else if(args.length == 1) {
-					sender.sendMessage(ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item and you are selling ");
-					plugin.getLogger().info("Player " + sender + " has created a trade with the following info: Price:" + args[0] + "Item Amount: ");
+					Player player = (Player) sender;
+					setItemId(player.getItemInHand().getTypeId());
+					setItemAmount(player.getItemInHand().getAmount());
+					setItemMaterial(player.getItemInHand().getType());
+					
+					sender.sendMessage(ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
+					plugin.getLogger().info("Player " + sender.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial() + " Item ID: " + getItemId());
 				}
 				else if(args.length == 2) {
-					
+					//TODO Check inventory for item in hand and make sure there is enough of that item
 				}
 				
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public int getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
+
+	public Material getItemMaterial() {
+		return itemMaterial;
+	}
+
+	public void setItemMaterial(Material itemMaterial) {
+		this.itemMaterial = itemMaterial;
+	}
+
+	public int getItemAmount() {
+		return itemAmount;
+	}
+
+	public void setItemAmount(int itemAmount) {
+		this.itemAmount = itemAmount;
 	}
 }

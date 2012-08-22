@@ -40,6 +40,7 @@ public class Admin implements CommandExecutor {
 				plugin.getLogger().info("Console: Trade Works");
 				sender.sendMessage("Player: Trade Works");
 				
+				
 				plugin.getLogger().info("Console: Trade Works");
 				return true;
 			}
