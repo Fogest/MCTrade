@@ -20,7 +20,7 @@ package me.fogest.mctrade;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import me.fogest.mctrade.commands.Admin;
-import me.fogest.mctrade.commands.Player;
+import me.fogest.mctrade.commands.PlayerCommands;
 import me.fogest.mctrade.listeners.Chat;
 
 public class MCTrade extends JavaPlugin {
@@ -33,6 +33,6 @@ public class MCTrade extends JavaPlugin {
 
 		// Registering the command executors
 		getCommand("mctrade").setExecutor(new Admin(this));
-		getCommand("trade").setExecutor(new Player(this));
+		getCommand("trade").setExecutor(new PlayerCommands(this));
 	}
 }
