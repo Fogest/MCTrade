@@ -21,6 +21,7 @@ package me.fogest.mctrade.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import me.fogest.mctrade.MCTrade;
 
@@ -32,13 +33,14 @@ public class PlayerCommands implements CommandExecutor {
 	}
 
 	public boolean onCommand(final CommandSender sender, final Command command,
-	final String label, String[] args) {
-		if (!command.getName().equalsIgnoreCase("mctrade"))
-			return false;
-		if (!(sender instanceof org.bukkit.entity.Player)) {
-			sender.sendMessage("Y U NO PLAYER??!111");
-			return false;
+	String cmdLabel, String[] args) {
+		if (cmdLabel.equalsIgnoreCase("mctrade")) {
+			if(sender.hasPermission("mctrade.mctrade")) {
+				plugin.getLogger().info("Console: Works");
+				sender.sendMessage("Player: Works");
+				return true;
+			}
 		}
-		return true;
+		return false;
 	}
 }
