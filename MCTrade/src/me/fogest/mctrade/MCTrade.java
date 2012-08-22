@@ -35,7 +35,11 @@ public class MCTrade extends JavaPlugin {
 		getCommand("mctrade").setExecutor(new PlayerCommands(this));
 		getCommand("trade").setExecutor(new Admin(this));
 		
-		Database db = new Database("localhost","root","","mctrade","3306");
+        if(!DatabaseManager.load()){
+            log.severe("Encountered an error while attempting to connect to the database.  Disabling...");
+            pm.disablePlugin(this);
+        }
+        DatabaseManager.getDatabase().populateRequestMap();
 		
 	}
 }
