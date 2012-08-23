@@ -46,7 +46,7 @@ public class SQLite extends Database {
 		sqlFile = new File(folder.getAbsolutePath() + File.separator + name + ".db");
 	}
 	
-	protected boolean initialize() {
+	public boolean initialize() {
 		try {
 		  Class.forName("org.sqlite.JDBC");
 		  

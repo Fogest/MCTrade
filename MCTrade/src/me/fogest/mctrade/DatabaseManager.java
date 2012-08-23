@@ -32,20 +32,20 @@ public class DatabaseManager {
     public static void disableDB(){ if(db.checkConnection()) db.close(); }
 
     private static void confirmTables(){
-        if(!db.checkTable("MCTrade_request")){
-            String queryString = "CREATE TABLE MCTrade_request (id integer primary key,"
-                    + " user_id integer no null,"
-                    + " mod_id integer,"
-                    + " mod_timestamp bigint,"
-                    + " mod_comment varchar(255),"
-                    + " tstamp bigint not null,"
-                    + " world varchar(255) not null,"
-                    + " x integer not null,"
-                    + " y integer not null,"
-                    + " z integer not null,"
-                    + " text varchar(255) not null,"
-                    + " status integer,"
-                    + " notified_of_completion integer)";
+        if(!db.checkTable("MCTrade_users")){
+            String queryString = "CREATE TABLE IF NOT EXISTS `users` ("
+			  +"`user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+			  +"`username` text COLLATE latin1_general_ci NOT NULL,"
+			  +"`password` text COLLATE latin1_general_ci NOT NULL,"
+			  +"`minecraft_name` text COLLATE latin1_general_ci NOT NULL,"
+			  +"`email` text COLLATE latin1_general_ci NOT NULL,"
+			  +"`user_level` int(11) NOT NULL,"
+			  +"`Current_Open_Trades` int(11) NOT NULL,"
+			  +"`code` text COLLATE latin1_general_ci NOT NULL,"
+			  +"`active` tinyint(4) NOT NULL,"
+			  +"`ip` text COLLATE latin1_general_ci NOT NULL,"
+			  +"PRIMARY KEY (`user_id`))";
+									
             try {
                 db.query(queryString);
                 MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the requests table.");
@@ -136,66 +136,6 @@ public class DatabaseManager {
             ps.setString(7, message);
             if(ps.executeUpdate() < 1) return false;
             ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static int getTicketById(int tradeId){
-        if(!db.checkConnection()) return 0;
-        int ticketId = 0;
-        ResultSet result = db.query("SELECT `id` FROM `MCTrade_request` WHERE `user_id` = '" + userId + "' ORDER BY `tstamp` DESC LIMIT 1");
-        try {
-            ticketId = result.getInt("id");
-            result.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return ticketId;
-    }
-
-    /**
-     * Sets a ticket to the status specified
-     * @param id
-     * @param name
-     * @return true if successful
-     */
-    public static String getOpenTrades(String player){
-        if(!db.checkConnection()) return false;
-        ResultSet rs = db.query("SELECT `status` FROM MCTrade_request WHERE `id` = " + id);
-        try {
-            if(!rs.isBeforeFirst()) return false;
-            if(rs.getInt("status") == status) {
-                rs.close();
-                return false;
-            }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        int modId = getUserIdCreateIfNotExists(name);
-        try {
-            PreparedStatement ps = db.getConnection().prepareStatement("UPDATE MCTrade_request SET `status` = ?, mod_id = ?, mod_timestamp = ? WHERE `id` = ?");
-            ps.setInt(1, status);
-            ps.setInt(2, modId);
-            ps.setLong(3, System.currentTimeMillis() / 1000);
-            ps.setInt(4, id);
-            if(ps.executeUpdate() < 1) {
-                ps.close();
-                return false;
-            }
-            ps.close();
-            //db.query("UPDATE MCTrade_request SET `status` = '" + status + "', mod_id = '" + modId + "', mod_timestamp = '" + System.currentTimeMillis() / 1000 + "' WHERE `id` = " + id).close();
-
-            ResultSet result = db.query("SELECT `status` FROM `MCTrade_request` WHERE `id` = " + id);
-            if(result.getInt("status") != status){
-                result.close();
-                return false;
-            }
-            result.close();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
