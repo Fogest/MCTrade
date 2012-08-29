@@ -54,15 +54,23 @@ public class DatabaseManager {
                 e.printStackTrace();
             }
         }
-        if(!db.checkTable("MCTrade_user")){
-            String queryString = "CREATE TABLE MCTrade_user (id integer primary key,"
-                    + " name varchar(255) not null,"
-                    + " banned integer)";
+        if(!db.checkTable("MCTrade_trades")){
+            String queryString = "CREATE TABLE IF NOT EXISTS `trades` ("
+			  +"`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+			  +"`Minecraft_Username` text NOT NULL,"
+			  +"`Block_ID` int(5) NOT NULL,"
+			  +"`Quantity` int(3) NOT NULL,"
+			  +"`CostPer` int(7) NOT NULL,"
+			  +"`TradeNotes` text NOT NULL,"
+			  +"`AccountName` text NOT NULL,"
+			  +"`IP` text NOT NULL,"
+			  +"`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade',"
+			  +"PRIMARY KEY (`id`))";
             try {
                 db.query(queryString);
-                MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the users table.");
+                MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the trades table.");
             } catch (Exception e) {
-                MCTrade.getPlugin().getLogger().log(Level.SEVERE, "Unable to create the users table.");
+                MCTrade.getPlugin().getLogger().log(Level.SEVERE, "Unable to create the trades table.");
                 e.printStackTrace();
             }
         }
