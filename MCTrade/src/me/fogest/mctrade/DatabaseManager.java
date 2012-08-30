@@ -76,14 +76,14 @@ public class DatabaseManager {
         }
     }
 
-    public static int getUserIdCreateIfNotExists(String player){
+    public static int getUserId(String player){
         if(!db.checkConnection()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `id` FROM `MCTrade_user` WHERE `name` = ?");
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `id` FROM `MCTrade_user` WHERE `mincraft_name` = ?");
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
-            userId = !rs.isBeforeFirst() ? createUser(player) : rs.getInt("id");
+            userId = !rs.isBeforeFirst() ? 0 : rs.getInt("user_id");
             ps.close();
             rs.close();
         } catch (SQLException e) {

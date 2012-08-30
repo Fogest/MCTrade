@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 public class MySQL extends Database {
 	private String hostname = "localhost";
 	private String portnmbr = "3306";
-	private String username = "minecraft";
+	private String username = "root";
 	private String password = "";
-	private String database = "minecraft";
+	private String database = "MCTrade";
 	
 	public MySQL(Logger log,
 				 String prefix,
