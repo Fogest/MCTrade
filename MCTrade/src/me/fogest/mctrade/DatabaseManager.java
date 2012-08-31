@@ -52,6 +52,7 @@ public class DatabaseManager {
 			  +"`code` text COLLATE latin1_general_ci NOT NULL,"
 			  +"`active` tinyint(4) NOT NULL,"
 			  +"`ip` text COLLATE latin1_general_ci NOT NULL,"
+			  +"`mc_code` int(11) NOT NULL,"
 			  +"PRIMARY KEY (`user_id`))";
 									
             try {
