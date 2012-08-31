@@ -27,7 +27,7 @@ public class MCTrade extends JavaPlugin {
 	private static MCTrade plugin;
 	@Override
 	public void onEnable() {
-
+		plugin = this;
 		// Registering the listeners (with the new 1.3 API)
 		getServer().getPluginManager().registerEvents(new Chat(this), this);
 
