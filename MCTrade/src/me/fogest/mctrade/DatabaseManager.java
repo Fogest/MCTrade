@@ -69,7 +69,7 @@ public class DatabaseManager {
 			  +"`Minecraft_Username` text NOT NULL,"
 			  +"`Block_ID` int(5) NOT NULL,"
 			  +"`Quantity` int(3) NOT NULL,"
-			  +"`CostPer` int(7) NOT NULL,"
+			  +"`CostPer` text NOT NULL,"
 			  +"`TradeNotes` text NOT NULL,"
 			  +"`AccountName` text NOT NULL,"
 			  +"`IP` text NOT NULL,"
@@ -116,8 +116,43 @@ public class DatabaseManager {
         }
         return userId;
     }
+    public static String getUsername(String player){
+        if(!db.checkConnection()) return "";
+        String username = "";
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `username` FROM `mctrade_users` WHERE `minecraft_name` = ?");
+            ps.setString(1, player);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            username = rs.getString("username");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return username;
+    }
+    public static int getCurOpenTrades(String player) {
+    	int curTrades = 0;
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Current_Open_Trades` FROM `mctrade_users` WHERE `minecraft_name` = ?");
+            ps.setString(1, player);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            	curTrades = rs.getInt("Current_Open_Trades");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    	
+    	
+    	return curTrades;
+    }
 
-    private static int createUser(String player){
+    public static int createUser(String player){
         if(!db.checkConnection()) return 0;
         int userId = 0;
         try {
@@ -147,33 +182,33 @@ public class DatabaseManager {
      * @param message String help request message
      * @return True if successful.
      */
-    public static boolean createTrade(String player, String world, Location location, String message, int userId){
-        if(!db.checkConnection() || userId == 0) return false;
-        long tstamp = System.currentTimeMillis()/1000;
-        try {
-            ResultSet rs = db.query("SELECT `banned` FROM MCTrade_user WHERE `id` = '" + userId + "'");
-            if(rs.getInt("banned") == 1){
-                rs.close();
-                return false;
-            }
-            rs.close();
-            PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO `MCTrade_request` (`user_id`, `tstamp`, `world`, `x`, `y`, `z`," +
-                    " `text`, `status`, `notified_of_completion`) VALUES" +
-                    " (?, ?, ?, ?, ?, ?, ?, '0', '0')");
-            ps.setInt(1, userId);
-            ps.setLong(2, tstamp);
-            ps.setString(3, world);
-            ps.setInt(4, location.getBlockX());
-            ps.setInt(5, location.getBlockY());
-            ps.setInt(6, location.getBlockZ());
-            ps.setString(7, message);
-            if(ps.executeUpdate() < 1) return false;
-            ps.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
+    public static int createTrade(String player, int blockId, int amount, String cost, String Ip){
+       String username = getUsername(player);
+       int id = 0;
+       try {
+    	   PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,'1')");
+    	   ps.setString(1, player);
+    	   ps.setInt(2, blockId);
+    	   ps.setInt(3, amount);
+    	   ps.setString(4,cost);
+    	   ps.setString(5, "Trade Created using MCTrade Plugin");
+    	   ps.setString(6,username);
+    	   ps.setString(7,Ip);
+    	   ps.executeUpdate();
+    	   ps.close();
+    	   ps = db.getConnection().prepareStatement("SELECT MAX(id) FROM mctrade_trades");
+    	   ResultSet rs = ps.executeQuery();
+    	   while(rs.next()){
+    	   id = rs.getInt("MAX(id)");
+    	   }
+    	   ps.close();
+    	   rs.close();
+    	   
+    	   
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+    	return id;
     }
 
 

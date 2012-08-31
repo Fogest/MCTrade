@@ -45,8 +45,6 @@ public class PlayerCommands implements CommandExecutor {
 	String cmdLabel, String[] args) {
 		if (cmdLabel.equalsIgnoreCase("mctrade")) {
 			if(sender.hasPermission("mctrade.mctrade")) {
-				plugin.getLogger().info("Console: MCTrade Works");
-				sender.sendMessage("Player: MCTrade Works");
 				
 				if(args.length < 1 || args.length > 2) {
 					sender.sendMessage(ChatColor.RED + "Command Usage : /mctrade <costPerItem> [Amount]. The item in your hand is the item being traded!");
@@ -61,11 +59,13 @@ public class PlayerCommands implements CommandExecutor {
 						String longLink = "http://fogest.net16.net/mctrade/registration.html";
 						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "You need an account with MCTrade to do this! Visit the following link to register: ");
 						sender.sendMessage(ChatColor.RED + longLink);
+						
 					}else {
 						if(args[0].equalsIgnoreCase("verify")) {
 							int ver = Verify.createUserVerification(sender.getName());
 							sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your verification code is: " + ver);
 						} else {
+						plugin.getServer().broadcastMessage(ChatColor.DARK_AQUA + "[MCTrade] "+ChatColor.RED + sender.getName() +" has created a trade with the id of: " + DatabaseManager.createTrade(sender.getName(), getItemId(), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress()) + " and is selling " + getItemAmount() + " " + getItemMaterial() + ", priced at $" + args[0] + " per item");
 						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
 						plugin.getLogger().info("Player " + sender.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial() + " Item ID: " + getItemId());
 						}
