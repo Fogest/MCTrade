@@ -27,6 +27,7 @@ import org.bukkit.entity.Player;
 
 import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
+import me.fogest.mctrade.UrlShortener;
 
 public class PlayerCommands implements CommandExecutor {
 	private MCTrade plugin;
@@ -56,8 +57,9 @@ public class PlayerCommands implements CommandExecutor {
 					setItemMaterial(player.getItemInHand().getType());
 					int userId = DatabaseManager.getUserId(sender.getName());
 					if(userId == 0) {
+						String longLink = ("http://fogest.net16.net/mctrade/registration.php?mc=" + sender.getName());
 						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "You need an account with MCTrade to do this! Visit the following link to register: ");
-						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "http://fogest.net16.net/mctrade/registration.php?mc=" + sender.getName());
+						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + UrlShortener.shortenURL(longLink));
 					}else {
 					sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
 					plugin.getLogger().info("Player " + sender.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial() + " Item ID: " + getItemId());

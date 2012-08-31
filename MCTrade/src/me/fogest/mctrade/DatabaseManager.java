@@ -91,7 +91,7 @@ public class DatabaseManager {
             PreparedStatement ps = db.getConnection().prepareStatement("SELECT `user_id` FROM `mctrade_users` WHERE `minecraft_name` = ?");
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
-            if(!rs.next()) {
+            if(rs.next()) {
             userId = rs.getInt("user_id");
             }
             ps.close();
