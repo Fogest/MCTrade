@@ -88,7 +88,7 @@ public class DatabaseManager {
         if(!db.checkConnection()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `id` FROM `mctrade_user` WHERE `mincraft_name` = ?");
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `user_id` FROM `mctrade_users` WHERE `minecraft_name` = ?");
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
             userId = !rs.isBeforeFirst() ? 0 : rs.getInt("user_id");
@@ -104,7 +104,7 @@ public class DatabaseManager {
         if(!db.checkConnection()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO `MCTrade_user` (`name`, `banned`) VALUES (?, '0')");
+            PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO `MCTrade_users` (`name`, `banned`) VALUES (?, '0')");
             ps.setString(1, player);
             if(ps.executeUpdate() < 1) return 0;
             ps.close();
