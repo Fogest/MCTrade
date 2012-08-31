@@ -41,7 +41,7 @@ public class DatabaseManager {
 
     private static void confirmTables(){
         if(!db.checkTable("MCTrade_users")){
-            String queryString = "CREATE TABLE IF NOT EXISTS `users` ("
+            String queryString = "CREATE TABLE IF NOT EXISTS `MCTrade_users` ("
 			  +"`user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 			  +"`username` text COLLATE latin1_general_ci NOT NULL,"
 			  +"`password` text COLLATE latin1_general_ci NOT NULL,"
@@ -63,7 +63,7 @@ public class DatabaseManager {
             }
         }
         if(!db.checkTable("MCTrade_trades")){
-            String queryString = "CREATE TABLE IF NOT EXISTS `trades` ("
+            String queryString = "CREATE TABLE IF NOT EXISTS `MCTrade_trades` ("
 			  +"`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 			  +"`Minecraft_Username` text NOT NULL,"
 			  +"`Block_ID` int(5) NOT NULL,"
@@ -88,7 +88,7 @@ public class DatabaseManager {
         if(!db.checkConnection()) return 0;
         int userId = 0;
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `id` FROM `MCTrade_user` WHERE `mincraft_name` = ?");
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `id` FROM `mctrade_user` WHERE `mincraft_name` = ?");
             ps.setString(1, player);
             ResultSet rs = ps.executeQuery();
             userId = !rs.isBeforeFirst() ? 0 : rs.getInt("user_id");
