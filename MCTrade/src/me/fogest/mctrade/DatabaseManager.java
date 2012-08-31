@@ -20,10 +20,6 @@ public class DatabaseManager {
     /**
      * Initializes, opens and confirms the tables and database.
      */
-    public DatabaseManager()
-    {
-    	this.plugin = plugin;
-    }
     
     public void enableDB(){
     	plugin.getLogger().info("Enable DB");
