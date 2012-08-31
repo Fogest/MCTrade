@@ -15,7 +15,7 @@ public class DatabaseManager {
 	private static MCTrade plugin = MCTrade.getPlugin();
     public static File dbFolder = new File("plugins/MCTrade");
 
-    public static SQLite db = new SQLite(MCTrade.getPlugin().getLogger(), "[MCTrade]", "MCTrade", dbFolder.getPath());
+    public static MySQL db = new MySQL(MCTrade.getPlugin().getLogger(),"[MCTrade]","localhost", "3306","mctrade","root","");
 
     /**
      * Initializes, opens and confirms the tables and database.
