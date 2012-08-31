@@ -12,6 +12,7 @@ import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.SQLibrary.*;
 
 public class DatabaseManager {
+	private MCTrade plugin;
     public static File dbFolder = new File("plugins/MCTrade");
 
     public static SQLite db = new SQLite(MCTrade.getPlugin().getLogger(), "[MCTrade]", "MCTrade", dbFolder.getPath());
@@ -19,11 +20,22 @@ public class DatabaseManager {
     /**
      * Initializes, opens and confirms the tables and database.
      */
+    public DatabaseManager()
+    {
+    	this.plugin = plugin;
+    }
     
-    public static void enableDB(){
+    public void enableDB(){
+    	plugin.getLogger().info("Enable DB");
+    	plugin.getLogger().info("Initializing");
         db.initialize();
+        plugin.getLogger().info("Initializing Done");
+        plugin.getLogger().info("Opening DB");
         db.open();
+        plugin.getLogger().info("Opening Done");
+        plugin.getLogger().info("Confirming Tables");
         confirmTables();
+        plugin.getLogger().info("Confirmed!");
     }
 
     /**
