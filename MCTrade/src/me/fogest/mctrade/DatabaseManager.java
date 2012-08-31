@@ -84,6 +84,20 @@ public class DatabaseManager {
             }
         }
     }
+    public static void setMcCode(int code, int UserId) {
+    	if(!db.checkConnection()) MCTrade.getPlugin().getLogger().log(Level.INFO, "There was an issue retrieving a db conntection");
+    	String query = "UPDATE `mctrade_users` SET  `mc_code` =  '125' WHERE  `mctrade_users`.`user_id` =1;";
+    	try {
+    	PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade`.`mctrade_users` SET  `mc_code` =  ? WHERE  `mctrade_users`.`user_id` = ?;");
+    	ps.setInt(1,code);
+    	ps.setInt(2,UserId);
+    	ps.executeUpdate();
+    	ps.close();
+    	
+    	} catch(SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static int getUserId(String player){
         if(!db.checkConnection()) return 0;

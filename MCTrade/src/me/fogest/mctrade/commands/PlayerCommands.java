@@ -28,6 +28,7 @@ import org.bukkit.entity.Player;
 import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.UrlShortener;
+import me.fogest.mctrade.Verify;
 
 public class PlayerCommands implements CommandExecutor {
 	private MCTrade plugin;
@@ -57,15 +58,20 @@ public class PlayerCommands implements CommandExecutor {
 					setItemMaterial(player.getItemInHand().getType());
 					int userId = DatabaseManager.getUserId(sender.getName());
 					if(userId == 0) {
-						String longLink = ("http://fogest.net16.net/mctrade/registration.php?mc=" + sender.getName());
+						String longLink = "http://fogest.net16.net/mctrade/registration.html";
 						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "You need an account with MCTrade to do this! Visit the following link to register: ");
-						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + UrlShortener.shortenURL(longLink));
+						sender.sendMessage(ChatColor.RED + longLink);
 					}else {
-					sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
-					plugin.getLogger().info("Player " + sender.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial() + " Item ID: " + getItemId());
+						if(args[0].equalsIgnoreCase("verify")) {
+							int ver = Verify.createUserVerification(sender.getName());
+							sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your verification code is: " + ver);
+						} else {
+						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
+						plugin.getLogger().info("Player " + sender.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial() + " Item ID: " + getItemId());
+						}
 					}
-				}
-				else if(args.length == 2) {
+			}
+			else if(args.length == 2) {
 					//TODO Check inventory for item in hand and make sure there is enough of that item
 				}
 				
