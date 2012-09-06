@@ -68,6 +68,7 @@ public class DatabaseManager {
 			  +"`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 			  +"`Minecraft_Username` text NOT NULL,"
 			  +"`Block_ID` int(5) NOT NULL,"
+			  +"`minecraft_name` text COLLATE latin1_general_ci NOT NULL,"
 			  +"`Quantity` int(3) NOT NULL,"
 			  +"`CostPer` text NOT NULL,"
 			  +"`TradeNotes` text NOT NULL,"
@@ -182,18 +183,19 @@ public class DatabaseManager {
      * @param message String help request message
      * @return True if successful.
      */
-    public static int createTrade(String player, int blockId, int amount, String cost, String Ip){
+    public static int createTrade(String player, int blockId,String block, int amount, String cost, String Ip){
        String username = getUsername(player);
        int id = 0;
        try {
-    	   PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,'1')");
+    	   PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,?,'1')");
     	   ps.setString(1, player);
     	   ps.setInt(2, blockId);
-    	   ps.setInt(3, amount);
-    	   ps.setString(4,cost);
-    	   ps.setString(5, "Trade Created using MCTrade Plugin");
-    	   ps.setString(6,username);
-    	   ps.setString(7,Ip);
+    	   ps.setString(3,"");
+    	   ps.setInt(4, amount);
+    	   ps.setString(5,cost);
+    	   ps.setString(6, "Trade Created using MCTrade Plugin");
+    	   ps.setString(7,username);
+    	   ps.setString(8,Ip);
     	   ps.executeUpdate();
     	   ps.close();
     	   ps = db.getConnection().prepareStatement("SELECT MAX(id) FROM mctrade_trades");
@@ -203,7 +205,6 @@ public class DatabaseManager {
     	   }
     	   ps.close();
     	   rs.close();
-    	   
     	   
 	} catch (SQLException e) {
 		e.printStackTrace();

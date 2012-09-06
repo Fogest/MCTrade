@@ -27,14 +27,15 @@ import org.bukkit.entity.Player;
 
 import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
-import me.fogest.mctrade.UrlShortener;
 import me.fogest.mctrade.Verify;
+import me.fogest.mctrade.AcceptTrade;
 
 public class PlayerCommands implements CommandExecutor {
 	private MCTrade plugin;
 	private int itemId;
 	private int itemAmount;
 	private Material itemMaterial;
+	private Material tradeItem;
 	
 	
 	public PlayerCommands(final MCTrade plugin) {
@@ -47,7 +48,7 @@ public class PlayerCommands implements CommandExecutor {
 			if(sender.hasPermission("mctrade.mctrade")) {
 				
 				if(args.length < 1 || args.length > 2) {
-					sender.sendMessage(ChatColor.RED + "Command Usage : /mctrade <costPerItem> [Amount]. The item in your hand is the item being traded!");
+					sender.sendMessage(ChatColor.WHITE + "Command Usage : /mctrade <costPerItem> [Amount]. The item in your hand is the item being traded!");
 				}
 				else if(args.length == 1) {
 					Player player = (Player) sender;
@@ -57,16 +58,23 @@ public class PlayerCommands implements CommandExecutor {
 					int userId = DatabaseManager.getUserId(sender.getName());
 					if(userId == 0) {
 						String longLink = "http://fogest.net16.net/mctrade/registration.html";
-						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "You need an account with MCTrade to do this! Visit the following link to register: ");
-						sender.sendMessage(ChatColor.RED + longLink);
+						sender.sendMessage(ChatColor.GOLD + "[MCTrade]"+ChatColor.WHITE + "You need an account with MCTrade to do this! Visit the following link to register: ");
+						sender.sendMessage(ChatColor.WHITE + longLink);
 						
 					}else {
 						if(args[0].equalsIgnoreCase("verify")) {
 							int ver = Verify.createUserVerification(sender.getName());
-							sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your verification code is: " + ver);
-						} else {
-						plugin.getServer().broadcastMessage(ChatColor.DARK_AQUA + "[MCTrade] "+ChatColor.RED + sender.getName() +" has created a trade with the id of: " + DatabaseManager.createTrade(sender.getName(), getItemId(), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress()) + " and is selling " + getItemAmount() + " " + getItemMaterial() + ", priced at $" + args[0] + " per item");
-						sender.sendMessage(ChatColor.DARK_AQUA + "[MCTrade]"+ChatColor.RED + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
+							sender.sendMessage(ChatColor.GOLD + "[MCTrade]"+ChatColor.WHITE + "Your verification code is: " + ver);
+						}else if(args[0].equalsIgnoreCase("accept")) {
+							if(args[1].matches("[0-9]+")) {
+								setTradeItem(acceptTrade(Integer.parseInt(args[1])));
+								sender.sendMessage(ChatColor.GOLD + "[MCTrade]"+ChatColor.WHITE + "You have sucessfully purchased ");
+								} else {
+									sender.sendMessage(ChatColor.GOLD + "[MCTrade]"+ChatColor.WHITE + "Please enter the trade ID using /mctrade accept <id>");
+								}
+						}else if (args[0].matches("[0-9]+")){
+						plugin.getServer().broadcastMessage(ChatColor.GOLD + "[MCTrade] "+ChatColor.RED + sender.getName() +" has created a trade with the id of: " + DatabaseManager.createTrade(sender.getName(), getItemId(),getItemMaterial().toString(),getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress()) + " and is selling " + getItemAmount() + " " + getItemMaterial() + ", priced at $" + args[0] + " per item");
+						sender.sendMessage(ChatColor.GOLD + "[MCTrade]"+ChatColor.WHITE + "Your trade has been sucessful and has been priced at: " + args[0] + " per item");
 						plugin.getLogger().info("Player " + sender.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial() + " Item ID: " + getItemId());
 						}
 					}
@@ -79,6 +87,15 @@ public class PlayerCommands implements CommandExecutor {
 			}
 		}
 		return false;
+	}
+	public Material acceptTrade(int tradeID) {
+		
+		
+		
+		setTradeItem(null);
+		
+		
+		return getTradeItem();
 	}
 
 	public int getItemId() {
@@ -103,5 +120,13 @@ public class PlayerCommands implements CommandExecutor {
 
 	public void setItemAmount(int itemAmount) {
 		this.itemAmount = itemAmount;
+	}
+
+	public Material getTradeItem() {
+		return tradeItem;
+	}
+
+	public void setTradeItem(Material tradeItem) {
+		this.tradeItem = tradeItem;
 	}
 }

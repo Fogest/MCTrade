@@ -18,6 +18,7 @@
 
 package me.fogest.mctrade;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.fogest.mctrade.commands.Admin;
 import me.fogest.mctrade.commands.PlayerCommands;
