@@ -68,7 +68,7 @@ public class DatabaseManager {
 			  +"`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 			  +"`Minecraft_Username` text NOT NULL,"
 			  +"`Block_ID` int(5) NOT NULL,"
-			  +"`minecraft_name` text COLLATE latin1_general_ci NOT NULL,"
+			  +"`Block_Name` text COLLATE latin1_general_ci NOT NULL,"
 			  +"`Quantity` int(3) NOT NULL,"
 			  +"`CostPer` text NOT NULL,"
 			  +"`TradeNotes` text NOT NULL,"
