@@ -1,0 +1,55 @@
+<?php
+include 'php/functions.php';
+?>
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<?php include_once 'header.php'; ?>
+</head>
+<body>
+
+<?php 
+$bodyTitle = "Contact";
+$bodySubTitle = "Contact Us";
+$bodyLocation = "Contact";
+$bodyTab = "contact";
+include_once 'body-head.php'?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+										 CONTENT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			
+			<div class="columns four">
+				<h3 class="sub-title cont-title-aside">Contact Information</h3>
+				<div class="separator2"></div>
+				<div class="email-line">E-mail: <a href="mailto:fogestjv@gmail.com">fogestjv@gmail.com</a></div>
+				<div class="website-line">Website: <a target="_blank" href="http://fogest.net16.net">http://fogest.net16.net</a></div>
+			</div>
+			<div class="columns twelve send-mess">
+				<h3 class="sub-title">Send us a message</h3>
+				<div class="separator2"></div>
+				<form action="php/sendmail.php" method="post" class="contact-form" id="SendContact" />
+					<div class="columns four alpha">
+						<label class="required">Name</label>
+						<input type="text" name="name" value="" class="required" />
+					</div>
+					<div class="columns four">
+						<label class="required">Email</label>
+						<input type="text" name="email" value="" class="required email" />
+					</div>
+					<div class="columns four omega">
+						<label class="required">Subject</label>
+						<input type="text" value="" name="subject" class="required"/>
+					</div>
+					<div class="clear"></div>
+					
+					<label class="required">Message</label>
+					<textarea cols="100" rows="10" class="requsired" name="message"></textarea>
+					
+					<input type="submit" value="Send message" class="submit-btn" name="Send" />
+				</form>
+			</div>
+			 <div class="clear"></div>
+			<div class="separator28"></div>
+<?php include_once 'footer.php'; ?>
+</body>
+</html>
