@@ -23,24 +23,27 @@ import org.bukkit.entity.Player;
 
 public class MessageHandler {
 	private String prefix;
-	private MCTrade plugin = MCTrade.getPlugin();
+	private MCTrade plugin;
 	
-	public MessageHandler(String prefix) {
+	public MessageHandler(String prefix, MCTrade plugin) {
 		this.prefix = prefix;
+		this.plugin = plugin;
 	}
 	public void sendPlayerMessage(Player p, String message) {
 		p.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
 	}
 	public void serverBroadCast(String message) {
+		if (plugin == null) System.out.println("we haz problems");
+	
 		plugin.getServer().broadcastMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
 	}
-	public void sendToConsoleInfo( String message) {
-		plugin.getLogger().info(prefix + message);
+	public void sendToConsoleInfo(String message){
+		plugin.getLogger().info(message);
 	}
-	public void sendToConsoleWarning( String message) {
-		plugin.getLogger().warning(prefix + message);
+	public void sendToConsoleWarning(String message) {
+		plugin.getLogger().warning(message);
 	}
-	public void sendToConsoleSevere( String message) {
-		plugin.getLogger().severe(prefix + message);
+	public void sendToConsoleSevere(String message) {
+		plugin.getLogger().severe(message);
 	}
 }

@@ -13,9 +13,7 @@ public class DatabaseManager {
 	private static MCTrade plugin = MCTrade.getPlugin();
     public static File dbFolder = new File("plugins/MCTrade");
     
-    private MessageHandler msg = new MessageHandler("[MCTrade](DB)");
-
-    public static MySQL db = new MySQL(MCTrade.getPlugin().getLogger(),"[MCTrade]","localhost", "3306","mctrade","root","");
+    public static me.fogest.mctrade.SQLibrary.MySQL db = new me.fogest.mctrade.SQLibrary.MySQL(MCTrade.getPlugin().getLogger(),"[MCTrade]","localhost", "3306","mctrade","root","");
 
     /**
      * Initializes, opens and confirms the tables and database.
@@ -352,8 +350,9 @@ public class DatabaseManager {
         }
         return tradeAmount;
     }
-
-
+    public static String getTraderIP(int id) {
+    	return "";
+    }
     public static boolean resetDB(){
         db.query("DELETE FROM MCTrade_request");
         db.query("DELETE FROM MCTrade_user");

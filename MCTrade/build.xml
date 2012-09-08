@@ -5,6 +5,8 @@
 
 	<path id="project.class.path">
 		<pathelement location="lib/craftbukkit.jar" />
+		<pathelement location="lib/bitlyj-2.0.0.jar" />
+		<pathelement location="lib/Vault.jar" />
 	</path>
 
 	<target name="init">
@@ -27,6 +29,10 @@
 			<include name="me/**" />
 			<include name="plugin.yml" />
 		</jar>
+		
+		<zip destfile="jar/MCTrade.jar" basedir="bin/">
+            <zipgroupfileset dir="lib" includes="bitlyj-2.0.0.jar" />
+        </zip>
 	</target>
 
 	<target name="clean">
