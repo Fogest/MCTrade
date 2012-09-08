@@ -27,10 +27,18 @@ public class Chat implements Listener {
 	private MCTrade plugin;
 
 	public Chat(final MCTrade plugin){
-		this.plugin = plugin;
+		this.setPlugin(plugin);
 	}
 
 	public void onPlayerChat(final AsyncPlayerChatEvent event) {
 		// TODO handle that event
+	}
+
+	public MCTrade getPlugin() {
+		return plugin;
+	}
+
+	public void setPlugin(MCTrade plugin) {
+		this.plugin = plugin;
 	}
 }

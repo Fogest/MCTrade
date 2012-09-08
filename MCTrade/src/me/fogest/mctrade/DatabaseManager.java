@@ -6,14 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 
-import org.bukkit.Location;
-
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.SQLibrary.*;
 
 public class DatabaseManager {
 	private static MCTrade plugin = MCTrade.getPlugin();
     public static File dbFolder = new File("plugins/MCTrade");
+    
+    private MessageHandler msg = new MessageHandler("[MCTrade](DB)");
 
     public static MySQL db = new MySQL(MCTrade.getPlugin().getLogger(),"[MCTrade]","localhost", "3306","mctrade","root","");
 
@@ -87,7 +87,6 @@ public class DatabaseManager {
     }
     public static void setMcCode(int code, int UserId) {
     	if(!db.checkConnection()) MCTrade.getPlugin().getLogger().log(Level.INFO, "There was an issue retrieving a db conntection");
-    	String query = "UPDATE `mctrade_users` SET  `mc_code` =  '125' WHERE  `mctrade_users`.`user_id` =1;";
     	try {
     	PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade`.`mctrade_users` SET  `mc_code` =  ? WHERE  `mctrade_users`.`user_id` = ?;");
     	ps.setInt(1,code);
@@ -190,7 +189,7 @@ public class DatabaseManager {
     	   PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,?,'1')");
     	   ps.setString(1, player);
     	   ps.setInt(2, blockId);
-    	   ps.setString(3,"");
+    	   ps.setString(3,block);
     	   ps.setInt(4, amount);
     	   ps.setString(5,cost);
     	   ps.setString(6, "Trade Created using MCTrade Plugin");
@@ -210,6 +209,148 @@ public class DatabaseManager {
 		e.printStackTrace();
 	}
     	return id;
+    }
+    
+    public static void acceptTrade(int id) {
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade_trades` SET  `Trade_Status` =  '2' WHERE  `mctrade_trades`.`id` =?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    public static void addRepOnTradeAccept(String mcUsername, int curUserLevel) {
+    	 try {
+             PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade_users` SET  `user_level` =  ? WHERE  `mctrade_users`.`Minecraft_name` = ?");
+             ps.setInt(1,(curUserLevel+1));
+             ps.setString(2, mcUsername);
+             ps.executeUpdate();
+             ps.close();
+         } catch (SQLException e) {
+             e.printStackTrace();
+         }
+    }
+    public static int getUserLevel(String mcUsername) {
+    	int userLevel = 0;
+    	if(!db.checkConnection()) return 0;
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `user_level` FROM `mctrade_users` WHERE `Minecraft_Name` = ?");
+            ps.setString(1, mcUsername);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            	userLevel = rs.getInt("user_level");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return userLevel;
+    }
+    public static String getTradeUsername(int id) {
+    	String tradeUsername = "";
+    	if(!db.checkConnection()) return "";
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Minecraft_Username` FROM `mctrade_trades` WHERE `id` = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            	tradeUsername = rs.getString("Minecraft_Username");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tradeUsername;
+    }
+    public static int getTradeStatus(int id) {
+    	int tradeStatus = 0;
+    	if(!db.checkConnection()) return 0;
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Trade_Status` FROM `mctrade_trades` WHERE `id` = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            	tradeStatus = rs.getInt("Trade_Status");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tradeStatus;
+    }
+    
+    public static int getTradeItemId(int id) {
+    	int tradeItemId = 0;
+    	if(!db.checkConnection()) return 0;
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Block_ID` FROM `mctrade_trades` WHERE `id` = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            tradeItemId = rs.getInt("Block_ID");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tradeItemId;
+    }
+    public static String getTradeItem(int id) {
+    	String tradeItem = "";
+    	if(!db.checkConnection()) return "";
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Block_Name` FROM `mctrade_trades` WHERE `id` = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            tradeItem = rs.getString("Block_Name");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tradeItem;
+    }
+    public static int getItemCost(int id) {
+    	int tradeCost = 0;
+    	if(!db.checkConnection()) return 0;
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `CostPer` FROM `mctrade_trades` WHERE `id` = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            tradeCost = rs.getInt("CostPer");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tradeCost;
+    }
+    public static int getTradeAmount(int id) {
+    	int tradeAmount = 0;
+    	if(!db.checkConnection()) return 0;
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Quantity` FROM `mctrade_trades` WHERE `id` = ?");
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            	tradeAmount = rs.getInt("Quantity");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return tradeAmount;
     }
 
 
