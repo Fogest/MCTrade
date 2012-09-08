@@ -18,6 +18,7 @@ permissions:
   mctrade.*:
     description: Gives access to all MCTrade Commands
     children:
+      mctrade.mctrade : true
       mctrade.mctrade.*: true
       mctrade.trade: true
       mctrade.mctrade.trade: true
@@ -27,9 +28,13 @@ permissions:
     description: Allows you access to all the commands that use /mctrade
     default: true
     children:
+      mctrade.mctrade : true
       mctrade.mctrade.trade: true
       mctrade.mctrade.verify: true
       mctrade.mctrade.accept: true
+  mctrade.mctrade:
+    description: Basic command used to see /mctrade usage info
+    default: true
   mctrade.mctrade.trade:
     description: Allows you to create a trade
     defaut: true
