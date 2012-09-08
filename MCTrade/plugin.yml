@@ -5,6 +5,8 @@ version: 0.1
 website: http://fogest.net16.net
 author: Fogest
 
+depend: [Vault]
+
 commands:
   mctrade:
     description: Used to start a trade
