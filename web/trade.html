@@ -1,0 +1,154 @@
+<?php
+	include 'php/functions.php';
+	if(!loggedin()) {
+	header("Location: login.html");
+	exit();
+	}
+?>
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<?php include_once 'header.php'; ?>
+</head>
+<body>
+
+<?php 
+$bodyTitle = "Trade";
+$bodySubTitle = "Create your trade";
+$bodyLocation = "Trade";
+$bodyTab = "trade";
+include_once 'body-head.php'?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+										 CONTENT
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			
+			<div class="columns eight send-mess">
+			<?php 
+			if (!$_POST['submit-trade'] ) {
+			?>
+				<h3 class="sub-title">Create the Trade:</h3>
+				<div class="separator2"></div>
+				<form action="trade.html" method="post" class="contact-form" id="SendContact" />
+					<label class="required">Item Being Traded:</label>
+					<select id="tradeItems" name="tradeItem"> 
+					  <option value="" title="images/stone.png">Stone</option>
+					</select>
+					
+					<label class="required">Quantity </label>
+					<input type="text" value="" name="quantity" class="required" maxlength="4" />
+					
+					<label class="required">Cost Per Item</label>
+					<input type="text" value="" name="costPerItem" class="required" maxlength="7"/>
+					
+					<label class="required">Trading Notes</label>
+					<textarea cols="100" rows="10" class="required" name="notes" maxlength="800"></textarea>
+
+					
+					<input type="submit" value="Submit Trade" class="submit-btn" name="submit-trade" />
+				</form>
+			</div>
+			<div class="columns six">
+				<h3 class="sub-title cont-title-aside">Trade Information</h3>
+				<div class="separator2"></div>
+				<p>Any user who trolls will have their IP blocked and Account on here banned</p>
+				<p>If you are trading an item that does not have a unique item ID, make sure to mention in the trading notes what specific item it is.</p>
+				<p>For example: I want blue wool. Instead of just leaving it at Wool you say in the Trade Notes that you are looking for blue wool!</p>
+				<p>This issue will be fixed soon, but as of now it has not been!</p>
+				<p>The price is in a format like so: "100", no quotes or symbols!</p>
+				<p>If you have under 10 sucessful trades you can only have 3 trades open at a time. If you have over 20 sucessful trades then you can have 6 trades open at a time! This is the max as of now! </p>
+			</div>
+			 <div class="clear"></div>
+			<div class="separator28"></div>
+			<?php
+			}
+			else 
+			{
+				$blockID = $_POST['tradeItem'];
+
+				$quantity = $_POST['quantity'];
+				$quantity = mysql_real_escape_string($quantity);
+
+				$costPerItem = $_POST['costPerItem'];
+				$costPerItem = mysql_real_escape_string($costPerItem);
+
+				$notes = $_POST['notes'];
+				$notes = mysql_real_escape_string($notes);
+
+				$username = getUsername();
+				
+				$login = mysql_query("SELECT * FROM mctrade_users WHERE username='$username'");
+				
+				$row = mysql_fetch_assoc($login);
+				
+				$active = $row['active'];
+				$mcUsername = $row['minecraft_name'];
+				$curTrades = $row['Current_Open_Trades'];
+				$userLevel = $row['user_level'];
+				
+				$IP = $_SERVER['REMOTE_ADDR'];
+
+				$errors = array();
+				if( !mcUsername ) {
+					$errors[1] = "There was an error retrieving your Minecraft username";
+				}
+				if( !$quantity ) {
+					$errors[2] = "You did not enter an amount";
+				}
+				if( !$costPerItem ) {
+					$errors[3] = "You did not enter a cost per item";
+				}
+				if( !$username ) {
+					$errors[4] = "You were not logged in!.";
+				}
+				if ($quantity <= 0)  {
+					$errors[5] = "You cannot trade less then 0 items!";
+				}
+				if ($active==1) {
+					$errors[6] = "Sorry, you need to go to the members page and verify your Minecraft Username!";
+				}
+
+				if( count($errors) > 0 ) {
+					foreach($errors as $error) {
+						echo "$error<br>";
+					}
+				} else {
+					if(!($userLevel == 104)) {
+						if($curTrades > 3 && $userLevel < 10) {
+						echo "You are only allowed to have 3 open trades at a time since you have under 10 sucessful trades";
+						exit();
+						}
+						else if($curTrades > 6 && $userLevel < 20) {
+						echo "You are only allowed to have 6 open trades at a time! (this is the max!)";
+						exit();
+						}
+						else{
+						echo "Your trade request has been created!";
+						mysql_query("INSERT INTO mctrade_trades VALUES ('','$mcUsername','$blockID', '$quantity','$costPerItem','$notes','$username','$IP','1')");
+						$curTrades = $curTrades + 1;
+						mysql_query("UPDATE mctrade_users SET Current_Open_Trades='$curTrades' WHERE username='$username'");
+						}
+					}
+					if($userLevel == 104) {
+						echo "Your trade request has been created!";
+						mysql_query("INSERT INTO mctrade_trades VALUES ('','$mcUsername','$blockID', '$quantity','$costPerItem','$notes','$username','$IP','1')");
+						}
+				}
+			}
+			?>
+	<!-- end content -->
+
+<?php include_once 'footer.php'; ?>
+<script type="text/javascript">
+$(function(){
+      var items="";
+      $.getJSON("php/process_item_list.php",function(data){
+        $.each(data,function(index,item) 
+        {
+          items+="<option value='"+item.ID+"'>"+item.item_name+"</option>";
+        });
+        $("#tradeItems").html(items); 
+      });
+    });
+</script>
+</body>
+</html>
