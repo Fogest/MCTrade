@@ -4,3 +4,4 @@ jar
 .settings
 .project
 .classpath
+/.classpath
