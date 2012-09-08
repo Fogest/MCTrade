@@ -47,7 +47,7 @@ public class PlayerCommands implements CommandExecutor {
 	public boolean onCommand(final CommandSender sender, final Command command,
 			String cmdLabel, String[] args) {
 		if (cmdLabel.equalsIgnoreCase("mctrade")) {
-			if (sender.hasPermission("mctrade.mctrade")) {
+			if (MCTrade.perms.has(sender, "mctrade.mctrade")) {
 
 				if (args.length <= 0) {
 					Player player = (Player) sender;
