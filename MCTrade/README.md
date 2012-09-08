@@ -1,1 +1,4 @@
-You will need to create a directory called lib and download craftbukkit.jar into that.
+# MCTrade #
+
+----------
+The plugin is currently still being developed, therefore there is not much to the readme yet!

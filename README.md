@@ -1,1 +1,4 @@
-Make sure you have a lib folder with craftbukkit.jar inside of it.
+# MCTrade #
+
+----------
+The plugin is currently still being developed, therefore there is not much to the readme yet!
