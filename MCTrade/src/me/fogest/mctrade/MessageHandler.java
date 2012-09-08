@@ -16,7 +16,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 package me.fogest.mctrade;
 
 import org.bukkit.ChatColor;
@@ -40,5 +39,8 @@ public class MessageHandler {
 	}
 	public void sendToConsoleWarning( String message) {
 		plugin.getLogger().warning(prefix + message);
+	}
+	public void sendToConsoleSevere( String message) {
+		plugin.getLogger().severe(prefix + message);
 	}
 }
