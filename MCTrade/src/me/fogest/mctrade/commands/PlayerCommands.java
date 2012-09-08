@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.MessageHandler;
+import me.fogest.mctrade.UrlShortener;
 import me.fogest.mctrade.Verify;
 import me.fogest.mctrade.AcceptTrade;
 
@@ -44,17 +45,19 @@ public class PlayerCommands implements CommandExecutor {
 		this.m = m;
 	}
 
-	public boolean onCommand(final CommandSender sender, final Command command,
-			String cmdLabel, String[] args) {
+	public boolean onCommand(final CommandSender sender, final Command command, String cmdLabel,
+			String[] args) {
 		if (cmdLabel.equalsIgnoreCase("mctrade")) {
-			if (MCTrade.perms.has(sender, "mctrade.mctrade")) {
-
-				if (args.length <= 0) {
+			if (args.length <= 0) {
+				if (MCTrade.perms.has(sender, "mctrade.mctrade")
+						|| MCTrade.perms.has(sender, "mctrade.*")) {
 					Player player = (Player) sender;
-					m.sendPlayerMessage(
-							player,
+					m.sendPlayerMessage(player,
 							"Command Usage : /mctrade <costPerItem> [Amount]. The item in your hand is the item being traded!");
-				} else if (args.length >= 1) {
+				}
+			} else if (args.length >= 1) {
+				if (MCTrade.perms.has(sender, "mctrade.mctrade")
+						|| MCTrade.perms.has(sender, "mctrade.*")) {
 					Player player = (Player) sender;
 					setItemId(player.getItemInHand().getTypeId());
 					setItemAmount(player.getItemInHand().getAmount());
@@ -62,89 +65,80 @@ public class PlayerCommands implements CommandExecutor {
 					int userId = DatabaseManager.getUserId(sender.getName());
 					if (userId == 0) {
 						String longLink = "http://fogest.net16.net/mctrade/registration.html";
-						m.sendPlayerMessage(
-								player,
+						m.sendPlayerMessage(player,
 								"You need an account with MCTrade to do this! Visit the following link to register: ");
-						m.sendPlayerMessage(player, longLink);
+						m.sendPlayerMessage(player, UrlShortener.shortenURL(longLink));
 					} else {
 						if (args[0].equalsIgnoreCase("verify")) {
-							int ver = Verify.createUserVerification(sender
-									.getName());
-							m.sendPlayerMessage(player,
-									"Your verification code is: " + ver);
+							if (MCTrade.perms.has(sender, "mctrade.mctrade.verify")
+									|| MCTrade.perms.has(sender, "mctrade.*")) {
+								int ver = Verify.createUserVerification(sender.getName());
+								m.sendPlayerMessage(player, "Your verification code is: " + ver);
+							}
 						} else if (args[0].equalsIgnoreCase("accept")) {
+							if (MCTrade.perms.has(sender, "mctrade.mctrade.accept")
+									|| MCTrade.perms.has(sender, "mctrade.*")) {
 							if (args[1].matches("[0-9]+")) {
 								int id = Integer.parseInt(args[1]);
-								String mcTrader = DatabaseManager
-										.getTradeUsername(id);
+								String mcTrader = DatabaseManager.getTradeUsername(id);
 
 								if (!(mcTrader.equals(sender.getName()))) {
-									int tradeStatus = DatabaseManager
-											.getTradeStatus(id);
+									int tradeStatus = DatabaseManager.getTradeStatus(id);
 									if (tradeStatus == 1) {
 										AcceptTrade accept = new AcceptTrade(
-												Integer.parseInt(args[1]),
-												player);
+												Integer.parseInt(args[1]), player);
 										m.sendPlayerMessage(
 												player,
 												"You have sucessfully purchased "
-														+ accept.getAmount()
-														+ " "
-														+ accept.getTradeItem()
-														+ "'s");
+														+ accept.getAmount() + " "
+														+ accept.getTradeItem() + "'s");
 										double cost = DatabaseManager.getItemCost(id);
 										int amount = DatabaseManager.getTradeAmount(id);
-										MCTrade.econ.withdrawPlayer(sender.getName(), (cost * amount));
-										MCTrade.econ.depositPlayer(DatabaseManager.getTradeUsername(id), (cost * amount));
+										MCTrade.econ.withdrawPlayer(sender.getName(),
+												(cost * amount));
+										MCTrade.econ.depositPlayer(
+												DatabaseManager.getTradeUsername(id),
+												(cost * amount));
 									} else if (tradeStatus == 2) {
 										m.sendPlayerMessage(player,
 												"This trade has already been accepted!");
 									} else if (tradeStatus == 3) {
-										m.sendPlayerMessage(player,
-												"This trade is hidden");
+										m.sendPlayerMessage(player, "This trade is hidden");
 									}
 								} else {
-									m.sendPlayerMessage(player,
-											"You cannot accept your own trades");
+									m.sendPlayerMessage(player, "You cannot accept your own trades");
 								}
 							} else {
 								m.sendPlayerMessage(player,
 										"Please enter the trade ID using /mctrade accept <id>");
 							}
 						} else if (args[0].matches("[0-9]+")) {
-							ItemStack tradeItem = new ItemStack(
-									getItemMaterial(), itemAmount);
+							ItemStack tradeItem = new ItemStack(getItemMaterial(), itemAmount);
 							boolean trade = onTradeRemoveItem(tradeItem, player);
 							if (trade == true) {
 								m.serverBroadCast(sender.getName()
 										+ " has created a trade with the id of: "
-										+ DatabaseManager.createTrade(
-												sender.getName(), getItemId(),
-												getItemMaterial().toString(),
-												getItemAmount(), args[0],
-												player.getAddress()
-														.getAddress()
-														.getHostAddress())
-										+ " and is selling " + getItemAmount()
-										+ " " + getItemMaterial()
-										+ ", priced at $" + args[0]
+										+ DatabaseManager.createTrade(sender.getName(),
+												getItemId(), getItemMaterial().toString(),
+												getItemAmount(), args[0], player.getAddress()
+														.getAddress().getHostAddress())
+										+ " and is selling " + getItemAmount() + " "
+										+ getItemMaterial() + ", priced at $" + args[0]
 										+ " per item");
 
 								m.sendPlayerMessage(player,
 										"Your trade has been sucessful and has been priced at: "
 												+ args[0] + " per item");
 
-								m.sendToConsoleInfo("Player "
-										+ sender.getName()
+								m.sendToConsoleInfo("Player " + sender.getName()
 										+ " has created a trade with the following info: Price:"
-										+ args[0] + " Item Amount: "
-										+ getItemAmount() + " Item: "
-										+ getItemMaterial() + " Item ID: "
-										+ getItemId());
+										+ args[0] + " Item Amount: " + getItemAmount() + " Item: "
+										+ getItemMaterial() + " Item ID: " + getItemId());
 							} else if (trade == false) {
 								m.sendPlayerMessage(player,
 										"Sorry, you don't have that much of that item!");
 							}
+						}
 						}
 					}
 				}
