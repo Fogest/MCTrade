@@ -127,8 +127,8 @@ public class PlayerCommands implements CommandExecutor {
 									m.serverBroadCast(sender.getName()
 											+ " has created a new trade (" + tId + ")");
 									int price = Integer.parseInt(args[0]);
-									m.serverBroadCast(" Item: " + getItemMaterial() + " Amount: "
-											+ getItemAmount() + " Price: " + price);
+									m.serverBroadCast(" Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: "
+											+ ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY +  price);
 									m.serverBroadCast(UrlShortener
 											.shortenURL("http://fogest.net16.net/mctrade/trades.html?id="
 													+ tId));
