@@ -40,7 +40,7 @@ public class PlayerCommands implements CommandExecutor {
 	private Material itemMaterial;
 	private MessageHandler m;
 
-	private double tax = 2.00;
+	private double tax = 0.02;
 	private double taxAmount;
 
 	public PlayerCommands(final MCTrade plugin, MessageHandler m) {
