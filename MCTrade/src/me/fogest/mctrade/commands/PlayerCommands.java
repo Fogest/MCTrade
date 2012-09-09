@@ -40,6 +40,9 @@ public class PlayerCommands implements CommandExecutor {
 	private Material itemMaterial;
 	private MessageHandler m;
 
+	private double tax = 2.00;
+	private double taxAmount;
+
 	public PlayerCommands(final MCTrade plugin, MessageHandler m) {
 		this.plugin = plugin;
 		this.m = m;
@@ -78,8 +81,8 @@ public class PlayerCommands implements CommandExecutor {
 									int tradeStatus = DatabaseManager.getTradeStatus(id);
 									if (tradeStatus == 1) {
 										double cost = DatabaseManager.getItemCost(id);
-										int amount = DatabaseManager.getTradeAmount(id);
-										cost = (cost * amount);
+										// int amount =
+										// DatabaseManager.getTradeAmount(id);
 										if (MCTrade.econ.getBalance(sender.getName()) >= cost) {
 											AcceptTrade accept = new AcceptTrade(
 													Integer.parseInt(args[1]), player);
@@ -119,22 +122,28 @@ public class PlayerCommands implements CommandExecutor {
 							if (!(getItemMaterial().toString().equals("AIR"))) {
 								ItemStack tradeItem = new ItemStack(getItemMaterial(), itemAmount);
 								boolean trade = onTradeRemoveItem(tradeItem, player);
-								if (trade == true) {
+								int price = Integer.parseInt(args[0]);
+								taxAmount = (price * tax);
+								double balance = (MCTrade.econ.getBalance(sender.getName()));
+								if (trade == true && balance >= taxAmount) {
+									MCTrade.econ.withdrawPlayer(sender.getName(), taxAmount);
 									int tId = DatabaseManager.createTrade(sender.getName(),
 											getItemId(), getItemMaterial().toString(),
 											getItemAmount(), args[0], player.getAddress()
 													.getAddress().getHostAddress());
 									m.serverBroadCast(sender.getName()
 											+ " has created a new trade (" + tId + ")");
-									int price = Integer.parseInt(args[0]);
-									m.serverBroadCast(" Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: "
-											+ ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY +  price);
-									m.serverBroadCast(UrlShortener
-											.shortenURL("http://fogest.net16.net/mctrade/trades.html?id="
-													+ tId));
+
+									m.serverBroadCast(" Item: " + ChatColor.GRAY
+											+ getItemMaterial() + ChatColor.WHITE + " Amount: "
+											+ ChatColor.GRAY + getItemAmount() + ChatColor.WHITE
+											+ " Price: " + ChatColor.GRAY + price);
+									m.serverBroadCast("More Info: "
+											+ UrlShortener
+													.shortenURL("http://fogest.net16.net/mctrade/trades.html?id="
+															+ tId));
 									m.sendPlayerMessage(player,
-											"Your trade has been sucessful and has been priced at: "
-													+ args[0] + " per item");
+											"You have been charged " + taxAmount + " for the creation of this trade!");
 
 									m.sendToConsoleInfo("Player "
 											+ sender.getName()
@@ -145,6 +154,11 @@ public class PlayerCommands implements CommandExecutor {
 								} else if (trade == false) {
 									m.sendPlayerMessage(player,
 											"Sorry, you don't have that much of that item!");
+								} else if (balance < taxAmount) {
+									m.sendPlayerMessage(
+											player,
+											"To prevent abuse, tax is charged on your item, on purchase rather then when your trade is accepted. Tax is based on the price you set the trade at and the tax for this one is: "
+													+ taxAmount + "And you only have " + balance);
 								}
 							} else {
 								m.sendPlayerMessage(player,

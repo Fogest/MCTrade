@@ -68,7 +68,7 @@ public class DatabaseManager {
 			  +"`Block_ID` int(5) NOT NULL,"
 			  +"`Block_Name` text COLLATE latin1_general_ci NOT NULL,"
 			  +"`Quantity` int(3) NOT NULL,"
-			  +"`CostPer` text NOT NULL,"
+			  +"`Cost` text NOT NULL,"
 			  +"`TradeNotes` text NOT NULL,"
 			  +"`AccountName` text NOT NULL,"
 			  +"`IP` text NOT NULL,"
@@ -320,11 +320,11 @@ public class DatabaseManager {
     	int tradeCost = 0;
     	if(!db.checkConnection()) return 0;
         try {
-            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `CostPer` FROM `mctrade_trades` WHERE `id` = ?");
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Cost` FROM `mctrade_trades` WHERE `id` = ?");
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
-            tradeCost = rs.getInt("CostPer");
+            tradeCost = rs.getInt("Cost");
             }
             ps.close();
             rs.close();
