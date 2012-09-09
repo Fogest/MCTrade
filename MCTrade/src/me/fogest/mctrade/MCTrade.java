@@ -55,8 +55,6 @@ public class MCTrade extends JavaPlugin {
 		perms = getProvider(Permission.class);
 		chat = getProvider(Chat.class);
 		
-		getLogger().info(UrlShortener.shortenURL("http://google.com"));
-		
 		
 	}
 	public <T> T getProvider(final Class<T> c) {
