@@ -14,7 +14,7 @@ $bodySubTitle = "View all the current trades!";
 $bodyLocation = "Trades";
 $bodyTab = "trades";
 include_once 'body-head.php'?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 										 CONTENT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 <?php 
@@ -40,7 +40,7 @@ $tradeID = $row['id'];
 $mcUsername = $row['Minecraft_Username'];
 $blockName = $row['Block_Name'];
 $quantity = $row['Quantity'];
-$costPer = $row['CostPer'];
+$Cost = $row['Cost'];
 $tradeNotes = $row['TradeNotes'];
 $tradeStatus = $row['Trade_Status'];
 
@@ -53,7 +53,7 @@ echo "$blockName";
 echo "<h1>Quantity</h1>";
 echo "$quantity";
 echo "<h1>Cost Per Item</h1>";
-echo "$costPer";
+echo "$Cost";
 echo "<h1>Trade Notes</h1>";
 echo "$tradeNotes";
 echo "<h1>Trade Status</h1>";
@@ -70,7 +70,7 @@ if($tradeStatus == 2) {echo "<img src='images/assets/cancel-icon.png' alt='Open'
 			<th>Minecraft Username</th>
 			<th>Item Name</th>
 			<th>Quantity</th>
-			<th>Cost Per Item</th>
+			<th>Price</th>
 			<th class="last-th center-th">Trade Status(opened/closed)</th>
 		</tr>
 	</thead>
@@ -89,7 +89,7 @@ if($tradeStatus == 2) {echo "<img src='images/assets/cancel-icon.png' alt='Open'
 	$mcUsername = $row['Minecraft_Username'];
 	$blockName = $row['Block_Name'];
 	$quantity = $row['Quantity'];
-	$costPer = $row['CostPer'];
+	$Cost = $row['Cost'];
 	$tradeStatus = $row['Trade_Status'];
 	
 	if($tradeStatus!=3) {
@@ -98,7 +98,7 @@ if($tradeStatus == 2) {echo "<img src='images/assets/cancel-icon.png' alt='Open'
 		echo "<td>$mcUsername</td>";
 		echo "<td>$blockName</td>";
 		echo "<td>$quantity</td>";
-		echo "<td>$costPer</td>";
+		echo "<td>$Cost</td>";
 		if($tradeStatus == 1) { echo "<td class='last-td center-td'><img src='images/assets/accept-icon.png' alt='Open' title='Open' width='16px' height='16px'/></td>"; }
 		if($tradeStatus == 2) { echo "<td class='last-td center-td'><img src='images/assets/cancel-icon.png' alt='Closed' title='Closed' width='16px' height='16px' /></td>"; }
 		echo "</tr>";

@@ -63,7 +63,7 @@ if($username) { ?>
 			<th>Minecraft Username</th>
 			<th>Block ID</th>
 			<th>Quantity</th>
-			<th>Cost Per Item</th>
+			<th>Price</th>
 			<th>Trading Notes</th>
 			<th class="last-th">Trade Status(opened/closed)</th>
 		</tr>
@@ -82,7 +82,7 @@ if($username) { ?>
 	$mcUsername = $row['Minecraft_Username'];
 	$blockID = $row['Block_ID'];
 	$quantity = $row['Quantity'];
-	$costPer = $row['CostPer'];
+	$Cost = $row['Cost'];
 	$tradeNotes = $row['TradeNotes'];
 	$tradeStatus = $row['Trade_Status'];
 	if($mcUsername!="") {
@@ -92,7 +92,7 @@ if($username) { ?>
 		echo "<td>$mcUsername</td>";
 		echo "<td>$blockID</td>";
 		echo "<td>$quantity</td>";
-		echo "<td>$costPer</td>";
+		echo "<td>$Cost</td>";
 		echo "<td>$tradeNotes</td>";
 		if($tradeStatus == 1) { echo "<td class='last-td'><img src='images/assets/accept-icon.png' alt='Open' title='Open' width='16px' height='16px'/> <a href='php/close.php?tradeID=$tradeID'>(Close)</a> </td>"; }
 		if($tradeStatus == 2) { echo "<td class='last-td'><img src='images/assets/cancel-icon.png' alt='Closed' title='Closed' width='16px' height='16px' /></td>"; }
