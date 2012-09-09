@@ -120,16 +120,18 @@ public class PlayerCommands implements CommandExecutor {
 								ItemStack tradeItem = new ItemStack(getItemMaterial(), itemAmount);
 								boolean trade = onTradeRemoveItem(tradeItem, player);
 								if (trade == true) {
+									int tId = DatabaseManager.createTrade(sender.getName(),
+											getItemId(), getItemMaterial().toString(),
+											getItemAmount(), args[0], player.getAddress()
+													.getAddress().getHostAddress());
 									m.serverBroadCast(sender.getName()
-											+ " has created a trade with the id of: "
-											+ DatabaseManager.createTrade(sender.getName(),
-													getItemId(), getItemMaterial().toString(),
-													getItemAmount(), args[0], player.getAddress()
-															.getAddress().getHostAddress())
-											+ " and is selling " + getItemAmount() + " "
-											+ getItemMaterial() + ", priced at $" + args[0]
-											+ " per item");
-
+											+ " has created a new trade (" + tId + ")");
+									int price = Integer.parseInt(args[0]);
+									m.serverBroadCast(" Item: " + getItemMaterial() + " Amount: "
+											+ getItemAmount() + " Price: " + price);
+									m.serverBroadCast(UrlShortener
+											.shortenURL("http://fogest.net16.net/mctrade/trades.html?id="
+													+ tId));
 									m.sendPlayerMessage(player,
 											"Your trade has been sucessful and has been priced at: "
 													+ args[0] + " per item");
@@ -145,7 +147,8 @@ public class PlayerCommands implements CommandExecutor {
 											"Sorry, you don't have that much of that item!");
 								}
 							} else {
-								m.sendPlayerMessage(player, "I know air is cool an all, but I just cannot let you sell that :)");
+								m.sendPlayerMessage(player,
+										"I know air is cool an all, but I just cannot let you sell that :)");
 							}
 						}
 					}
