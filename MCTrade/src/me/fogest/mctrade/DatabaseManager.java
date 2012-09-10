@@ -220,15 +220,17 @@ public class DatabaseManager {
         }
     }
     public static void addRepOnTradeAccept(String mcUsername, int curUserLevel) {
-    	 try {
-             PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade_users` SET  `user_level` =  ? WHERE  `mctrade_users`.`Minecraft_name` = ?");
-             ps.setInt(1,(curUserLevel+1));
-             ps.setString(2, mcUsername);
-             ps.executeUpdate();
-             ps.close();
-         } catch (SQLException e) {
-             e.printStackTrace();
-         }
+    	if(curUserLevel < 100) {
+	    	 try {
+	             PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade_users` SET  `user_level` =  ? WHERE  `mctrade_users`.`Minecraft_name` = ?");
+	             ps.setInt(1,(curUserLevel+1));
+	             ps.setString(2, mcUsername);
+	             ps.executeUpdate();
+	             ps.close();
+	         } catch (SQLException e) {
+	             e.printStackTrace();
+	         }
+    	}
     }
     public static int getUserLevel(String mcUsername) {
     	int userLevel = 0;
