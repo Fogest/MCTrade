@@ -61,7 +61,7 @@ if($username) { ?>
 		<tr>
 			<th class="first-th">Trade ID</th>
 			<th>Minecraft Username</th>
-			<th>Block ID</th>
+			<th>Item</th>
 			<th>Quantity</th>
 			<th>Price</th>
 			<th>Trading Notes</th>
@@ -87,7 +87,7 @@ if($username) { ?>
 	
 	$tradeID = $row['id'];
 	$mcUsername = $row['Minecraft_Username'];
-	$blockID = $row['Block_ID'];
+	$blockName = $row['Block_Name'];
 	$quantity = $row['Quantity'];
 	$Cost = $row['Cost'];
 	$tradeNotes = $row['TradeNotes'];
@@ -97,7 +97,7 @@ if($username) { ?>
 		echo "<tr>";
 		echo "<td class='first-td'><a href='trades.html?id=$tradeID'>$tradeID</a></td>";
 		echo "<td>$mcUsername</td>";
-		echo "<td>$blockID</td>";
+		echo "<td>$blockName</td>";
 		echo "<td>$quantity</td>";
 		echo "<td>$Cost</td>";
 		echo "<td>$tradeNotes</td>";
