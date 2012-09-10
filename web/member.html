@@ -71,6 +71,13 @@ if($username) { ?>
 	
 	<tbody>
 	<?php 
+	$username = getUsername();
+	$query = mysql_query("SELECT * FROM mctrade_users WHERE username='$username'");
+
+	$row = mysql_fetch_assoc($query);
+
+	$userLevel = $row['user_level'];
+
 	$res = mysql_query("SELECT MAX(id) FROM mctrade_trades");
 	$row = mysql_fetch_row($res);
 	$cur = $row[0];
@@ -94,7 +101,10 @@ if($username) { ?>
 		echo "<td>$quantity</td>";
 		echo "<td>$Cost</td>";
 		echo "<td>$tradeNotes</td>";
-		if($tradeStatus == 1) { echo "<td class='last-td'><img src='images/assets/accept-icon.png' alt='Open' title='Open' width='16px' height='16px'/> <a href='php/close.php?tradeID=$tradeID'>(Close)</a> </td>"; }
+		if($tradeStatus == 1) { 
+		echo "<td class='last-td'><img src='images/assets/accept-icon.png' alt='Open' title='Open' width='16px' height='16px'/>";
+		if($userLevel == 104) {echo "<a href='php/close.php?tradeID=$tradeID'>(Close)</a> </td>"; }
+		}
 		if($tradeStatus == 2) { echo "<td class='last-td'><img src='images/assets/cancel-icon.png' alt='Closed' title='Closed' width='16px' height='16px' /></td>"; }
 		echo "</tr>";
 		}
