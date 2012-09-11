@@ -35,10 +35,12 @@ public class MCTrade extends JavaPlugin {
     public static Economy econ = null;
     public static Permission perms = null;
     public static Chat chat = null;
-	
+	private Updater u;
+    
 	public MCTrade() {
 		plugin = this;
 		msg = new MessageHandler("[MCTrade]", this);
+		u = new Updater();
 	}
 	
 	@Override
@@ -55,7 +57,7 @@ public class MCTrade extends JavaPlugin {
 		perms = getProvider(Permission.class);
 		chat = getProvider(Chat.class);
 		
-		
+		u.checkForUpdate();
 	}
 	public <T> T getProvider(final Class<T> c) {
         final org.bukkit.plugin.RegisteredServiceProvider<T> provider

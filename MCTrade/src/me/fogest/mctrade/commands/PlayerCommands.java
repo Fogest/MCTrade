@@ -167,10 +167,6 @@ public class PlayerCommands implements CommandExecutor {
 						}
 					}
 				}
-				// else if(args.length == 2) {
-				// TODO Check inventory for item in hand and make sure there is
-				// enough of that item
-				// }
 
 				return true;
 			}
