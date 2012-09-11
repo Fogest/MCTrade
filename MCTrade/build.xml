@@ -25,6 +25,7 @@
 
 	<target name="mkjar" depends="mk">
 		<copy file="plugin.yml" todir="bin" overwrite="true"/>
+		<copy file="config.yml" todir="bin" overwrite="true"/>
 		<jar destfile="jar/MCTrade.jar" basedir="bin/">
 			<include name="me/**" />
 			<include name="plugin.yml" />
