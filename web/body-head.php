@@ -81,14 +81,12 @@
 					<ul id="main-menu">
 						<li><a <?php if($bodyTab == "index") { ?> class="active" <?php } ?> href="index.html">Home</a></li>
 						<li><a <?php if($bodyTab == "trades") { ?> class="active" <?php } ?> href="trades.html">Trades</a></li>
-						<li><a <?php if($bodyTab == "trade") { ?> class="active" <?php } ?> href="trade.html">Trade Creation</a></li>
 						<li><a <?php if($bodyTab == "contact") { ?> class="active" <?php } ?> href="contact.html">Contact</a></li>
 					</ul>
 					<select id="main-menu-mobile">
 						<option value="#" />Navigate to
 						<option value="index.html" />&nbsp;-&nbsp;Home	
 						<option value="trades.html" />&nbsp;-&nbsp;Trades
-                        <option value="trade.html" />&nbsp;-&nbsp;Trade Creation
 						<option value="contact.html" />&nbsp;-&nbsp;Contact
 					</select>
 				</nav>
