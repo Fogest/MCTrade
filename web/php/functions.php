@@ -1,9 +1,10 @@
 <?php
 //Session
 session_start();
+include 'config.php';
 //Connect to database
-mysql_connect("localhost","root","") or die();
-mysql_select_db("mctrade") or die();
+mysql_connect($host,$username,$password) or die();
+mysql_select_db($database) or die();
 
 //Login check function
 function loggedin()

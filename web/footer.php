@@ -23,7 +23,7 @@
 			<div class="container">
 				<!-- logo & some text -->
 				<div class="four columns">
-					<h3 class="logo font_gautami"><a href="index.html"><img src="layout/styles/images/blue/footer-logo.png" alt="BeautyMind" /></a></h3>
+					<h3 class="logo font_gautami"><a href="http://dev.bukkit.org/server-mods/mctrade/"><img src="layout/styles/images/blue/footer-logo.png" alt="MCTrade" /></a></h3>
 					<p class="flogo-text">Trading make simply!</p>
 				</div>
                 <!-- news -->
