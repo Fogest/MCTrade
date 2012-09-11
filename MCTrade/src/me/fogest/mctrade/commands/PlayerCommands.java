@@ -40,8 +40,9 @@ public class PlayerCommands implements CommandExecutor {
 	private Material itemMaterial;
 	private MessageHandler m;
 
-	private double tax = 0.02;
+	private double tax = MCTrade.tax;
 	private double taxAmount;
+	private String webURL = MCTrade.webAddress;
 
 	public PlayerCommands(final MCTrade plugin, MessageHandler m) {
 		this.plugin = plugin;
@@ -65,7 +66,7 @@ public class PlayerCommands implements CommandExecutor {
 					setItemMaterial(player.getItemInHand().getType());
 					int userId = DatabaseManager.getUserId(sender.getName());
 					if (userId == 0) {
-						String longLink = "http://fogest.net16.net/mctrade/registration.html";
+						String longLink = webURL + "registration.html";
 						m.sendPlayerMessage(player,
 								"You need an account with MCTrade to do this! Visit the following link to register: ");
 						m.sendPlayerMessage(player, UrlShortener.shortenURL(longLink));
@@ -140,7 +141,7 @@ public class PlayerCommands implements CommandExecutor {
 											+ " Price: " + ChatColor.GRAY + price);
 									m.serverBroadCast("More Info: "
 											+ UrlShortener
-													.shortenURL("http://fogest.net16.net/mctrade/trades.html?id="
+													.shortenURL(webURL+"trades.html?id="
 															+ tId));
 									m.sendPlayerMessage(player,
 											"You have been charged " + taxAmount + " for the creation of this trade!");

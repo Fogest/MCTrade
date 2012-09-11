@@ -33,8 +33,6 @@ public class MessageHandler {
 		p.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
 	}
 	public void serverBroadCast(String message) {
-		if (plugin == null) System.out.println("we haz problems");
-	
 		plugin.getServer().broadcastMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
 	}
 	public void sendToConsoleInfo(String message){

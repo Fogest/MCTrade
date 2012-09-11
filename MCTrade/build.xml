@@ -28,6 +28,7 @@
 		<jar destfile="jar/MCTrade.jar" basedir="bin/">
 			<include name="me/**" />
 			<include name="plugin.yml" />
+			<include name="config.yml" />
 		</jar>
 		
 		<zip destfile="jar/MCTrade.jar" basedir="bin/">

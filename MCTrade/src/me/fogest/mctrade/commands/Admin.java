@@ -33,7 +33,7 @@ public class Admin implements CommandExecutor {
 	public boolean onCommand(final CommandSender sender, final Command command,
 	final String cmdLabel, final String[] args) {
 		if (cmdLabel.equalsIgnoreCase("trade")) {
-			if(sender.hasPermission("mctrade.trade")) {
+			if(MCTrade.perms.has(sender,"mctrade.trade") || MCTrade.perms.has(sender, "mctrade.*")) {
 				plugin.getLogger().info("Console: Trade Works");
 				sender.sendMessage("Player: Trade Works");
 				

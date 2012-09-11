@@ -38,16 +38,10 @@ public class DatabaseManager {
      */
     
     public static void enableDB(){
-    	plugin.getLogger().info("Enable DB");
-    	plugin.getLogger().info("Initializing");
         db.initialize();
-        plugin.getLogger().info("Initializing Done");
-        plugin.getLogger().info("Opening DB");
         db.open();
-        plugin.getLogger().info("Opening Done");
-        plugin.getLogger().info("Confirming Tables");
         confirmTables();
-        plugin.getLogger().info("Confirmed!");
+        plugin.getLogger().info("Database Connectioned Sucessfully Established!");
     }
 
     /**

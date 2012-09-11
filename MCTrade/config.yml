@@ -5,9 +5,13 @@ mysql:
   username: root
   password:
   database: Minecraft
-WebAccess:
-  Moderator:
-    - SomeModsNameHere
-  Admin:
-    - SomeAdminsNameHere
-UpdateChecker: true
+Web:
+  MctradeDirectory: http://websitename.com/mctrade/
+  Access:
+    Moderator:
+      - SomeModsNameHere
+    Admin:
+      - SomeAdminsNameHere
+TradeOptions:
+  UpdateChecker: true
+  Tax: 2.00

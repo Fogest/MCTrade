@@ -45,6 +45,10 @@ public class MCTrade extends JavaPlugin {
 	public static String mysqlPassword;
 	public static String mysqlDatabase;
 	
+	public static double tax;
+	
+	public static String webAddress;
+	
 	//public String[] moderators;
 	//public String[] admins;
 	
@@ -73,6 +77,9 @@ public class MCTrade extends JavaPlugin {
 		if(update == true)
 			msg.sendToConsoleInfo(u.checkForUpdate());
 	}
+	public void onReload() {
+		
+	}
 	public <T> T getProvider(final Class<T> c) {
         final org.bukkit.plugin.RegisteredServiceProvider<T> provider
             = Bukkit.getServicesManager().getRegistration(c);
@@ -90,21 +97,23 @@ public class MCTrade extends JavaPlugin {
 		mysqlPassword = getConfig().getString("mysql.password");
 		mysqlDatabase = getConfig().getString("mysql.database");
 		
-        List<String> modsList = getConfig().getStringList("WebAccess.Moderator");
+        List<String> modsList = getConfig().getStringList("Web.Access.Moderator");
         for (String s : modsList){
         	DatabaseManager.setUserLevelForMod(s);
         	//int i = 0;
             //moderators[i] = s;
            // i++;
         }
-        List<String> adminList = getConfig().getStringList("WebAccess.Admin");
+        List<String> adminList = getConfig().getStringList("Web.Access.Admin");
         for (String s : adminList){
         	DatabaseManager.setUserLevelForAdmin(s);
         	//int i = 0;
            // admins[i] = s;
             //i++;
         }
-        update = getConfig().getBoolean("UpdateChecker");
+        update = getConfig().getBoolean("TradeOptions.UpdateChecker");
+        tax = getConfig().getDouble("TradeOptions.Tax");
+        webAddress = getConfig().getString("Web.MctradeDirectory");
 		
 	}
 	public void onDisable() {

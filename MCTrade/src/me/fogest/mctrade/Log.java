@@ -20,5 +20,5 @@
 package me.fogest.mctrade;
 
 public class Log {
-
+//TODO Make the class actually be used to log everything :)
 }
