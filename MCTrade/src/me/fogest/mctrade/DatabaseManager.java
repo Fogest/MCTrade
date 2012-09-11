@@ -267,6 +267,34 @@ public class DatabaseManager {
         }
         return userLevel;
     }
+    public static void setUserLevelForMod(String mcUsername) {
+    	int curLevel = getUserLevel(mcUsername);
+    	if(curLevel != 103) {
+			 try {
+			     PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade_users` SET  `user_level` =  ? WHERE  `mctrade_users`.`Minecraft_name` = ?");
+			     ps.setInt(1,(103));
+			     ps.setString(2, mcUsername);
+			     ps.executeUpdate();
+			     ps.close();
+			 } catch (SQLException e) {
+			     e.printStackTrace();
+			 }
+    	}
+    }
+    public static void setUserLevelForAdmin(String mcUsername) {
+    	int curLevel = getUserLevel(mcUsername);
+    	if(curLevel != 104) {
+			 try {
+			     PreparedStatement ps = db.getConnection().prepareStatement("UPDATE  `mctrade_users` SET  `user_level` =  ? WHERE  `mctrade_users`.`Minecraft_name` = ?");
+			     ps.setInt(1,(104));
+			     ps.setString(2, mcUsername);
+			     ps.executeUpdate();
+			     ps.close();
+			 } catch (SQLException e) {
+			     e.printStackTrace();
+			 }
+    	}
+    }
     public static String getTradeUsername(int id) {
     	String tradeUsername = "";
     	if(!db.checkConnection()) return "";

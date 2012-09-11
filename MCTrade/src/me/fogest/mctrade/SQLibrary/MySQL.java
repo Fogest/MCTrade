@@ -15,12 +15,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+import me.fogest.mctrade.MCTrade;
+
 public class MySQL extends Database {
-	private String hostname = "localhost";
-	private String portnmbr = "3306";
-	private String username = "root";
-	private String password = "";
-	private String database = "MCTrade";
+	private String hostname = MCTrade.mysqlHostname;
+	private String portnmbr = MCTrade.mysqlPort;
+	private String username = MCTrade.mysqlUsername;
+	private String password = MCTrade.mysqlPassword;
+	private String database = MCTrade.mysqlDatabase;
 	
 	public MySQL(Logger log,
 				 String prefix,

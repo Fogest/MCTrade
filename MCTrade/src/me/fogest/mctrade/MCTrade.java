@@ -18,6 +18,8 @@
 
 package me.fogest.mctrade;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.fogest.mctrade.commands.Admin;
@@ -36,6 +38,17 @@ public class MCTrade extends JavaPlugin {
     public static Permission perms = null;
     public static Chat chat = null;
 	private Updater u;
+
+	public static String mysqlHostname; 
+	public static String mysqlPort;
+	public static String mysqlUsername;
+	public static String mysqlPassword;
+	public static String mysqlDatabase;
+	
+	//public String[] moderators;
+	//public String[] admins;
+	
+	public boolean update;
     
 	public MCTrade() {
 		plugin = this;
@@ -57,7 +70,8 @@ public class MCTrade extends JavaPlugin {
 		perms = getProvider(Permission.class);
 		chat = getProvider(Chat.class);
 		
-		u.checkForUpdate();
+		if(update == true)
+			msg.sendToConsoleInfo(u.checkForUpdate());
 	}
 	public <T> T getProvider(final Class<T> c) {
         final org.bukkit.plugin.RegisteredServiceProvider<T> provider
@@ -66,6 +80,33 @@ public class MCTrade extends JavaPlugin {
             return provider.getProvider();
         return null;
     }
+	public void reloadSettings() {
+		reloadConfig();
+		getConfig().options().copyDefaults(true);
+		saveConfig();
+		mysqlHostname = getConfig().getString("mysql.hostname");
+		mysqlPort = getConfig().getString("mysql.port");
+		mysqlUsername = getConfig().getString("mysql.username");
+		mysqlPassword = getConfig().getString("mysql.password");
+		mysqlDatabase = getConfig().getString("mysql.database");
+		
+        List<String> modsList = getConfig().getStringList("WebAccess.Moderator");
+        for (String s : modsList){
+        	DatabaseManager.setUserLevelForMod(s);
+        	//int i = 0;
+            //moderators[i] = s;
+           // i++;
+        }
+        List<String> adminList = getConfig().getStringList("WebAccess.Admin");
+        for (String s : adminList){
+        	DatabaseManager.setUserLevelForAdmin(s);
+        	//int i = 0;
+           // admins[i] = s;
+            //i++;
+        }
+        update = getConfig().getBoolean("UpdateChecker");
+		
+	}
 	public void onDisable() {
 		DatabaseManager.disableDB();
 	}
