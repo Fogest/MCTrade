@@ -1,0 +1,13 @@
+#MCTrade Config File
+mysql:
+  hostname: localhost
+  port: 3306
+  username: root
+  password:
+  database: Minecraft
+WebAccess:
+  Moderator:
+    - SomeModsNameHere
+  Admin:
+    - SomeAdminsNameHere
+UpdateChecker: true
