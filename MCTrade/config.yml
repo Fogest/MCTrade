@@ -1,17 +1,29 @@
 #MCTrade Config File
 mysql:
+  #hostname: is the url in which is used to connect to your database. Simply remove localhost and put the url here which should be provided by your host!
   hostname: localhost
+  #Port: port number may not be provided but 3306 is the defaul port used for MySQL databases so this should be fine as is.
   port: 3306
+  #username:  is the username used for the MySQL database
   username: root
+  #password: is the password used for the MySQL database
   password: 123
+  #database: is the name of the database
   database: Minecraft
 Web:
+  #MctradeDirectory: is basically the link that would take you directly to the MCTrade webpage. PLEASE leave it formatted as is. That means do not put anything like index.html on the end, simply leave it like it is and make sure to include the trailing slash as shown below
   MctradeDirectory: http://websitename.com/mctrade/
+  #Controls who has what level of access on the webpage. As of now it does not do much to have higher access except that you are basically excempt from gaining rep on the trading system.
   Access:
+    #As of now someone given moderator status gets no extra's. This will be used in the future when the admin control panel on the website is finished.
     Moderator:
       - SomeModsNameHere
+    #This allows the admin to close his own trades, and get access to the admin control panel (which has nothing yet). 
     Admin:
       - SomeAdminsNameHere
+#General trade options
 TradeOptions:
-  UpdateChecker: true
-  Tax: 2.00
+  #Do you want MCTrade to auto update to the latest stable version. true means yes and false means no. This uses the jar file from the official bukkit dev page meaning, it's safe!
+  AutoUpdate: true
+  #This is the amount of tax a user is charged when they create a trade. Please make sure to include at least 2 decimal places as seen below. The tax works by simply multiplying the price the user is selling the item for by the tax and then charging the user that result. 0.02 is a 2% tax charged. If you want no tax just make it 0.00
+  Tax: 0.02

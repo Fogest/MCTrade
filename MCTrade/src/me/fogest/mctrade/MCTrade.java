@@ -109,7 +109,7 @@ public class MCTrade extends JavaPlugin {
         for (String s : adminList){
         	admins.add(s);
         }
-        update = getConfig().getBoolean("TradeOptions.UpdateChecker");
+        update = getConfig().getBoolean("TradeOptions.AutoUpdate");
         tax = getConfig().getDouble("TradeOptions.Tax");
         webAddress = getConfig().getString("Web.MctradeDirectory");
 		

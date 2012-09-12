@@ -25,3 +25,4 @@ permissions:
   mctrade.trade:
     description: Allows you to perform administrative commands
     default: op
+
