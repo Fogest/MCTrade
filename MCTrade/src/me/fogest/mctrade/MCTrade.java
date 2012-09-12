@@ -18,6 +18,7 @@
 
 package me.fogest.mctrade;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,6 +81,13 @@ public class MCTrade extends JavaPlugin {
 		
 		if(update == true)
 			updater = new Updater(this, "mctrade", this.getFile(), Updater.UpdateType.DEFAULT, true);
+		
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    // Failed to submit the stats :-(
+		}
 	}
 	public void onReload() {
 		reloadSettings();

@@ -3,7 +3,7 @@
 session_start();
 include 'config.php';
 //Connect to database
-mysql_connect($host,$username,$password) or die();
+mysql_connect($hostname,$username,$password) or die();
 mysql_select_db($database) or die();
 
 //Login check function
