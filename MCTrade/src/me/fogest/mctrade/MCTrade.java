@@ -38,7 +38,6 @@ public class MCTrade extends JavaPlugin {
     public static Economy econ = null;
     public static Permission perms = null;
     public static Chat chat = null;
-	private Updater u;
 
 	public static String mysqlHostname; 
 	public static String mysqlPort;
@@ -50,6 +49,7 @@ public class MCTrade extends JavaPlugin {
 	
 	public static String webAddress;
 	
+	public Updater updater;
 	
 	public static ArrayList<String> moderaters;
 	public static ArrayList<String> admins;
@@ -59,7 +59,6 @@ public class MCTrade extends JavaPlugin {
 	public MCTrade() {
 		plugin = this;
 		msg = new MessageHandler("[MCTrade]", this);
-		u = new Updater();
 		moderaters = new ArrayList<String>();
 		admins = new ArrayList<String>();
 	}
@@ -80,7 +79,7 @@ public class MCTrade extends JavaPlugin {
 		chat = getProvider(Chat.class);
 		
 		if(update == true)
-			msg.sendToConsoleInfo(u.checkForUpdate());
+			updater = new Updater(this, "mctrade", this.getFile(), Updater.UpdateType.DEFAULT, true);
 	}
 	public void onReload() {
 		reloadSettings();

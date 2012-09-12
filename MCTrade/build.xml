@@ -26,9 +26,8 @@
 	<target name="mkjar" depends="mk">
 		<copy file="plugin.yml" todir="bin" overwrite="true"/>
 		<copy file="config.yml" todir="bin" overwrite="true"/>
-		<tstamp />
         <echo file="bin/plugin.yml" append="true"
-         message="version: ${DSTAMP}-${TSTAMP}"/>
+         message="version: 1.0"/>
 		<jar destfile="jar/MCTrade.jar" basedir="bin/">
 			<include name="me/**" />
 			<include name="plugin.yml" />
