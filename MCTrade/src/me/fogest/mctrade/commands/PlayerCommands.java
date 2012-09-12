@@ -118,7 +118,6 @@ public class PlayerCommands implements CommandExecutor {
 								m.sendPlayerMessage(player,
 										"Please enter the trade ID using /mctrade accept <id>");
 							}
-							m.sendPlayerMessage(player, "here 4");
 						} else if (args[0].matches("[0-9]+")) {
 							if (!(getItemMaterial().toString().equals("AIR"))) {
 								ItemStack tradeItem = new ItemStack(getItemMaterial(), itemAmount);
