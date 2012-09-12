@@ -3,7 +3,7 @@ mysql:
   hostname: localhost
   port: 3306
   username: root
-  password:
+  password: 123
   database: Minecraft
 Web:
   MctradeDirectory: http://websitename.com/mctrade/

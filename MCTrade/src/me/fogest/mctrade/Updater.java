@@ -61,6 +61,6 @@ public class Updater {
 					+ " and you are using " + version + "Bukkit Page: http://bit.ly/MCTrade";
 		}
 
-		return "Error checking for update";
+		return message;
 	}
 }

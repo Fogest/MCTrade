@@ -18,6 +18,7 @@
 
 package me.fogest.mctrade;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -49,8 +50,9 @@ public class MCTrade extends JavaPlugin {
 	
 	public static String webAddress;
 	
-	//public String[] moderators;
-	//public String[] admins;
+	
+	public static ArrayList<String> moderaters;
+	public static ArrayList<String> admins;
 	
 	public boolean update;
     
@@ -58,10 +60,13 @@ public class MCTrade extends JavaPlugin {
 		plugin = this;
 		msg = new MessageHandler("[MCTrade]", this);
 		u = new Updater();
+		moderaters = new ArrayList<String>();
+		admins = new ArrayList<String>();
 	}
 	
 	@Override
 	public void onEnable() {
+		reloadSettings();
 		// Registering the listeners (with the new 1.3 API)
 		getServer().getPluginManager().registerEvents(new Chat(this), this);
 
@@ -78,7 +83,7 @@ public class MCTrade extends JavaPlugin {
 			msg.sendToConsoleInfo(u.checkForUpdate());
 	}
 	public void onReload() {
-		
+		reloadSettings();
 	}
 	public <T> T getProvider(final Class<T> c) {
         final org.bukkit.plugin.RegisteredServiceProvider<T> provider
@@ -99,22 +104,26 @@ public class MCTrade extends JavaPlugin {
 		
         List<String> modsList = getConfig().getStringList("Web.Access.Moderator");
         for (String s : modsList){
-        	DatabaseManager.setUserLevelForMod(s);
-        	//int i = 0;
-            //moderators[i] = s;
-           // i++;
+            moderaters.add(s);
         }
         List<String> adminList = getConfig().getStringList("Web.Access.Admin");
         for (String s : adminList){
-        	DatabaseManager.setUserLevelForAdmin(s);
-        	//int i = 0;
-           // admins[i] = s;
-            //i++;
+        	admins.add(s);
         }
         update = getConfig().getBoolean("TradeOptions.UpdateChecker");
         tax = getConfig().getDouble("TradeOptions.Tax");
         webAddress = getConfig().getString("Web.MctradeDirectory");
 		
+	}
+	public void saveToDatabase() {
+		for(int i = 0;i < moderaters.size();i++) {
+			msg.sendToConsoleInfo(moderaters.get(i));
+			DatabaseManager.setUserLevelForMod(moderaters.get(i));
+		}
+		for(int i = 0;i < admins.size();i++) {
+			msg.sendToConsoleInfo(admins.get(i));
+			DatabaseManager.setUserLevelForAdmin(admins.get(i));
+		}
 	}
 	public void onDisable() {
 		DatabaseManager.disableDB();
