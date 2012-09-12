@@ -135,7 +135,7 @@ public class PlayerCommands implements CommandExecutor {
 									m.serverBroadCast(sender.getName()
 											+ " has created a new trade (" + tId + ")");
 
-									m.serverBroadCast(" Item: " + ChatColor.GRAY
+									m.serverBroadCast("Item: " + ChatColor.GRAY
 											+ getItemMaterial() + ChatColor.WHITE + " Amount: "
 											+ ChatColor.GRAY + getItemAmount() + ChatColor.WHITE
 											+ " Price: " + ChatColor.GRAY + price);
