@@ -139,7 +139,7 @@ public class PlayerCommands implements CommandExecutor {
 											+ getItemMaterial() + ChatColor.WHITE + " Amount: "
 											+ ChatColor.GRAY + getItemAmount() + ChatColor.WHITE
 											+ " Price: " + ChatColor.GRAY + price);
-									m.serverBroadCast("More Info: "
+									m.serverBroadCast("Trade Info: "
 											+ UrlShortener
 													.shortenURL(webURL+"trades.html?id="
 															+ tId));
