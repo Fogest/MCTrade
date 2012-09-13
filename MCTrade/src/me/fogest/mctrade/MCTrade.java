@@ -56,6 +56,8 @@ public class MCTrade extends JavaPlugin {
 	public static ArrayList<String> admins;
 	
 	public boolean update;
+	
+	public static boolean checkIP;
     
 	public MCTrade() {
 		plugin = this;
@@ -120,6 +122,7 @@ public class MCTrade extends JavaPlugin {
         update = getConfig().getBoolean("TradeOptions.AutoUpdate");
         tax = getConfig().getDouble("TradeOptions.Tax");
         webAddress = getConfig().getString("Web.MctradeDirectory");
+        checkIP = getConfig().getBoolean("TradeOptions.CheckTradeIP");
 		
 	}
 	public void saveToDatabase() {

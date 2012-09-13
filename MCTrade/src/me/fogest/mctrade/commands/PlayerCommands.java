@@ -43,6 +43,8 @@ public class PlayerCommands implements CommandExecutor {
 	private double tax = MCTrade.tax;
 	private double taxAmount;
 	private String webURL = MCTrade.webAddress;
+	
+	private boolean tradeGo = true;
 
 	public PlayerCommands(final MCTrade plugin, MessageHandler m) {
 		this.plugin = plugin;
@@ -79,37 +81,53 @@ public class PlayerCommands implements CommandExecutor {
 								int id = Integer.parseInt(args[1]);
 								String mcTrader = DatabaseManager.getTradeUsername(id);
 								if (!(mcTrader.equals(sender.getName()))) {
-									int tradeStatus = DatabaseManager.getTradeStatus(id);
-									if (tradeStatus == 1) {
-										double cost = DatabaseManager.getItemCost(id);
-										// int amount =
-										// DatabaseManager.getTradeAmount(id);
-										if (MCTrade.econ.getBalance(sender.getName()) >= cost) {
-											AcceptTrade accept = new AcceptTrade(
-													Integer.parseInt(args[1]), player);
-											m.sendPlayerMessage(
-													player,
-													"You have sucessfully purchased "
-															+ accept.getAmount() + " "
-															+ accept.getTradeItem() + "'s");
-
-											MCTrade.econ.withdrawPlayer(sender.getName(), (cost));
-											MCTrade.econ.depositPlayer(
-													DatabaseManager.getTradeUsername(id), (cost));
-										} else {
-											m.sendPlayerMessage(
-													player,
-													"Sorry, that trade costs: "
-															+ cost
-															+ " and you only have: "
-															+ MCTrade.econ.getBalance(sender
-																	.getName()));
+									
+									if(MCTrade.checkIP == true) {
+										if(!(player.getAddress().getAddress().getHostAddress().equals(DatabaseManager.getTraderIP(id)))) {
+											tradeGo = false;
+										}else {
+											tradeGo = true;
 										}
-									} else if (tradeStatus == 2) {
+									}
+									
+									if (tradeGo == true) {
+										int tradeStatus = DatabaseManager.getTradeStatus(id);
+										if (tradeStatus == 1) {
+											double cost = DatabaseManager.getItemCost(id);
+											// int amount =
+											// DatabaseManager.getTradeAmount(id);
+											if (MCTrade.econ.getBalance(sender.getName()) >= cost) {
+												AcceptTrade accept = new AcceptTrade(
+														Integer.parseInt(args[1]), player);
+												m.sendPlayerMessage(
+														player,
+														"You have sucessfully purchased "
+																+ accept.getAmount() + " "
+																+ accept.getTradeItem() + "'s");
+
+												MCTrade.econ.withdrawPlayer(sender.getName(),
+														(cost));
+												MCTrade.econ.depositPlayer(
+														DatabaseManager.getTradeUsername(id),
+														(cost));
+											} else {
+												m.sendPlayerMessage(
+														player,
+														"Sorry, that trade costs: "
+																+ cost
+																+ " and you only have: "
+																+ MCTrade.econ.getBalance(sender
+																		.getName()));
+											}
+										} else if (tradeStatus == 2) {
+											m.sendPlayerMessage(player,
+													"This trade has already been accepted!");
+										} else if (tradeStatus == 3) {
+											m.sendPlayerMessage(player, "This trade is hidden");
+										}
+									} else {
 										m.sendPlayerMessage(player,
-												"This trade has already been accepted!");
-									} else if (tradeStatus == 3) {
-										m.sendPlayerMessage(player, "This trade is hidden");
+												"You cannot accept your own trades");
 									}
 								} else {
 									m.sendPlayerMessage(player, "You cannot accept your own trades");
@@ -134,16 +152,15 @@ public class PlayerCommands implements CommandExecutor {
 									m.serverBroadCast(sender.getName()
 											+ " has created a new trade (" + tId + ")");
 
-									m.serverBroadCast("Item: " + ChatColor.GRAY
-											+ getItemMaterial() + ChatColor.WHITE + " Amount: "
-											+ ChatColor.GRAY + getItemAmount() + ChatColor.WHITE
-											+ " Price: " + ChatColor.GRAY + price);
+									m.serverBroadCast("Item: " + ChatColor.GRAY + getItemMaterial()
+											+ ChatColor.WHITE + " Amount: " + ChatColor.GRAY
+											+ getItemAmount() + ChatColor.WHITE + " Price: "
+											+ ChatColor.GRAY + price);
 									m.serverBroadCast("Trade Info: "
-											+ UrlShortener
-													.shortenURL(webURL+"trades.html?id="
-															+ tId));
-									m.sendPlayerMessage(player,
-											"You have been charged " + taxAmount + " for the creation of this trade!");
+											+ UrlShortener.shortenURL(webURL + "trades.html?id="
+													+ tId));
+									m.sendPlayerMessage(player, "You have been charged "
+											+ taxAmount + " for the creation of this trade!");
 
 									m.sendToConsoleInfo("Player "
 											+ sender.getName()

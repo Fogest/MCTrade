@@ -27,3 +27,5 @@ TradeOptions:
   AutoUpdate: true
   #This is the amount of tax a user is charged when they create a trade. Please make sure to include at least 2 decimal places as seen below. The tax works by simply multiplying the price the user is selling the item for by the tax and then charging the user that result. 0.02 is a 2% tax charged. If you want no tax just make it 0.00
   Tax: 0.02
+  CheckTradeIP: false
+  
