@@ -38,7 +38,7 @@ include_once 'body-head.php'?>
 					<input type="text" name="email" value="" class="required email" maxlength="150"/>
 
 					
-					<input type="submit" value="Send message" class="submit-btn" name="submit" />
+					<input type="submit" value="Register" class="submit-btn" name="submit" />
 				</form>
 				<?php
 			} else {
@@ -120,7 +120,7 @@ include_once 'body-head.php'?>
 					{
 					$password = md5($password);
 					$ip = $_SERVER['REMOTE_ADDR'];
-					mysql_query("INSERT INTO mctrade_mctrade_users VALUES ('','$username','$password', '$mcUsername','$email','0','0','$code','0','$ip')");
+					mysql_query("INSERT INTO mctrade_users VALUES ('','$username','$password', '$mcUsername','$email','0','0','$code','0','$ip')");
 					echo "You have been successfully registered! Please check your email ($email) to activate your account!";
 					}
 					}

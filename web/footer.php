@@ -28,7 +28,7 @@
 				</div>
                 <!-- news -->
 				<div class="four columns">
-					<h3>Latest News</h3>
+					<h3>Credits</h3>
 					<ul class="list_type2 latest_news">
 						<li>
 							<a href="http://fogest.net16.net/mctrade-logging-in-a-registration-now-working/">Login/Registration System Implemented</a>
