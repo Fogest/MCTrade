@@ -59,7 +59,7 @@ public class PlayerCommands implements CommandExecutor {
 				if (args.length <= 0) {
 					Player player = (Player) sender;
 					m.sendPlayerMessage(player,
-							"Command Usage : /mctrade <costPerItem> [Amount]. The item in your hand is the item being traded!");
+							"Command Usage : /mctrade <totalCost> [Amount]. The item in your hand is the item being traded!");
 				} else if (args.length >= 1) {
 					Player player = (Player) sender;
 					setItemId(player.getItemInHand().getTypeId());
