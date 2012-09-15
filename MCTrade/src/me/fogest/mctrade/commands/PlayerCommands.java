@@ -53,7 +53,6 @@ public class PlayerCommands implements CommandExecutor {
 
 	public boolean onCommand(final CommandSender sender, final Command command, String cmdLabel,
 			String[] args) {
-		if (cmdLabel.equalsIgnoreCase("mctrade")) {
 			if (MCTrade.perms.has(sender, "mctrade.mctrade")
 					|| MCTrade.perms.has(sender, "mctrade.*")) {
 
@@ -187,7 +186,6 @@ public class PlayerCommands implements CommandExecutor {
 
 				return true;
 			}
-		}
 		return false;
 	}
 

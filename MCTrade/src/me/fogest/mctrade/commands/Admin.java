@@ -22,26 +22,24 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import me.fogest.mctrade.MCTrade;
+import me.fogest.mctrade.MessageHandler;
 
 public class Admin implements CommandExecutor {
 	private MCTrade plugin;
-
-	public Admin(final MCTrade plugin) {
+	private MessageHandler m;
+	public Admin(final MCTrade plugin, MessageHandler m) {
 		this.plugin = plugin;
+		this.m = m;
 	}
 
 	public boolean onCommand(final CommandSender sender, final Command command,
 	final String cmdLabel, final String[] args) {
-		if (cmdLabel.equalsIgnoreCase("trade")) {
 			if(MCTrade.perms.has(sender,"mctrade.trade") || MCTrade.perms.has(sender, "mctrade.*")) {
 				plugin.getLogger().info("Console: Trade Works");
 				sender.sendMessage("Player: Trade Works");
-				
-				
 				plugin.getLogger().info("Console: Trade Works");
 				return true;
 			}
-		}
 		return false;
 	}
 }
