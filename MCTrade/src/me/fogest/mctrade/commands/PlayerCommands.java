@@ -192,6 +192,9 @@ public class PlayerCommands implements CommandExecutor {
 	public int checkItemMax(Player p) {
 		int amount = 0;
         for(ItemStack i : p.getInventory().getContents()){
+        	if(i == null) {
+        		continue;
+        		}
             if(i.getType().equals(getItemMaterial())){
               amount = amount + i.getAmount();
             }
