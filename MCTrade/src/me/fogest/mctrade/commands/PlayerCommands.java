@@ -130,34 +130,11 @@ public class PlayerCommands implements CommandExecutor {
 								}
 							}				
 							int price = Integer.parseInt(args[0]);
+							m.sendPlayerMessage(player, "Item: " + getItemMaterial() + " Amount: " + getItemAmount());
 							taxAmount = (price * tax);
 							double balance = (MCTrade.econ.getBalance(sender.getName()));
 							if (trade == true && balance >= taxAmount) {
-								ItemStack[] contents = player.getInventory().getContents();
-								int counter = 0;
-								for( ItemStack stack : Arrays.asList(contents) ){
-									if(stack == null){
-										continue;
-									}
-									if(stack.getTypeId() != getItemId()){
-										continue;
-									}
-									if(stack.getAmount() < itemAmount){
-										contents[counter] = null;
-										itemAmount-=stack.getAmount();
-									}
-									if(stack.getAmount() == itemAmount){
-										contents[counter] = null;
-										break;
-									}
-									if(stack.getAmount() > itemAmount){
-										stack.setAmount(stack.getAmount() - itemAmount);
-										contents[counter] = stack;
-										break;
-									}
-									counter++;
-								}
-								player.getInventory().setContents(contents);
+								removeItem(player,getItemMaterial(),getItemAmount());
 								MCTrade.econ.withdrawPlayer(sender.getName(), taxAmount);
 								int tId = DatabaseManager.createTrade(sender.getName(), getItemId(), getItemMaterial().toString(), getItemAmount(), args[0], player.getAddress().getAddress()
 										.getHostAddress());
@@ -201,6 +178,33 @@ public class PlayerCommands implements CommandExecutor {
           }
 		return amount;
 	}
+	public void removeItem(Player player, Material type, int amount){
+		    ItemStack[] contents = player.getInventory().getContents();
+		    int counter = 0;
+		    for( ItemStack stack : Arrays.asList(contents) ){
+		      if(stack == null){
+		        continue;
+		      }
+		      if(!(stack.getType().equals(type))){
+		        continue;
+		      }
+		      if(stack.getAmount() < amount){
+		        contents[counter] = null;
+		        amount-=stack.getAmount();
+		      }
+		      if(stack.getAmount() == amount){
+		        contents[counter] = null;
+		        break;
+		      }
+		      if(stack.getAmount() > amount){
+		        stack.setAmount(stack.getAmount() - amount);
+		        contents[counter] = stack;
+		        break;
+		      }
+		      counter++;
+		    }
+		    player.getInventory().setContents(contents);
+		  }
 
 	public boolean onTradeRemoveItem(ItemStack is, Player p) {
 		p.getInventory().removeItem(is);

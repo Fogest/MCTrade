@@ -18,6 +18,9 @@ $password is the password that you used to access the database
 $database = "Minecraft";
 $database is the database in which you will be using. A lot of times it's named Minecraft but it could be different!
 
+$siteURL = "http://websitename.com/mctrade/";
+$siteURL is the URL in which the web portion is located. Make sure to include the trailing slash at the end like the example shows, and do not include the index.php part. 
+
 MAKE SURE THERE ARE STILL QUOTES AROUND THE INFO!
 
 If you want to alter the top logo, I will let you do that and it's located at :

@@ -45,7 +45,7 @@ $tradeNotes = $row['TradeNotes'];
 $tradeStatus = $row['Trade_Status'];
 
 echo "<h1>Trade ID</h1>";
-echo "<a href='trades.html?id=$tradeID'>$tradeID</a>";
+echo "<a href='trades.php?id=$tradeID'>$tradeID</a>";
 echo "<h1>Minecraft Username</h1>";
 echo "$mcUsername";
 echo "<h1>Item Name</h1>";
@@ -94,7 +94,7 @@ if($tradeStatus == 2) {echo "<img src='images/assets/cancel-icon.png' alt='Open'
 	
 	if($tradeStatus!=3) {
 		echo "<tr>";
-		echo "<td class='first-td'><a href='trades.html?id=$tradeID'>$tradeID</a></td>";
+		echo "<td class='first-td'><a href='trades.php?id=$tradeID'>$tradeID</a></td>";
 		echo "<td>$mcUsername</td>";
 		echo "<td>$blockName</td>";
 		echo "<td>$quantity</td>";

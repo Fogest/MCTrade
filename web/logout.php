@@ -7,5 +7,5 @@
 	//unset cookies
 	setcookie("loggedin",FALSE);
 	
-	header("Location: index.html");
+	header("Location: index.php");
 ?>
