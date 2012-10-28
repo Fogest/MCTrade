@@ -26,18 +26,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.MessageHandler;
+import me.fogest.mctrade.Msg;
 import me.fogest.mctrade.UrlShortener;
 import me.fogest.mctrade.Verify;
 import me.fogest.mctrade.AcceptTrade;
 
 public class PlayerCommands implements CommandExecutor {
-	private MCTrade plugin;
 	private int itemId;
 	private int itemAmount;
 	private Material itemMaterial;
@@ -46,79 +45,46 @@ public class PlayerCommands implements CommandExecutor {
 	private double tax = MCTrade.tax;
 	private double taxAmount;
 	private String webURL = MCTrade.webAddress;
+	private String longLink = webURL + "registration.php";
 
 	private boolean trade = true;
 	private boolean tradeGo = true;
+	
+	private int userId, ver, id, tradeStatus;
+	
+	//Command Handlers
 
 	public PlayerCommands(final MCTrade plugin, MessageHandler m) {
-		this.plugin = plugin;
 		this.m = m;
 	}
 
 	public boolean onCommand(final CommandSender sender, final Command command, String cmdLabel, String[] args) {
-		if (MCTrade.perms.has(sender, "mctrade.mctrade") || MCTrade.perms.has(sender, "mctrade.*")) {
-
+		Player player = (Player) sender;
+		//Checks players global permissions.
+		if (checkPerms(player)) {
+			//Gives usage message if player simply inputs /mct
 			if (args.length <= 0) {
-				Player player = (Player) sender;
-				m.sendPlayerMessage(player, "Command Usage : /mctrade <totalCost> [Amount]. The item in your hand is the item being traded!");
-			} else if (args.length >= 1) {
-				Player player = (Player) sender;
-				setItemId(player.getItemInHand().getTypeId());
-				setItemAmount(player.getItemInHand().getAmount());
-				setItemMaterial(player.getItemInHand().getType());
-				int userId = DatabaseManager.getUserId(sender.getName());
+				m.tellPlayer(player,Msg.COMMAND_USAGE);
+			} 
+			//Checking if the user actually put something after /mct
+			else if (args.length >= 1) {
+				prepareTrade(player);
+				
+				//Checking if user has an account or not.
 				if (userId == 0) {
-					String longLink = webURL + "registration.html";
-					m.sendPlayerMessage(player, "You need an account with MCTrade to do this! Visit the following link to register: ");
-					m.sendPlayerMessage(player, UrlShortener.shortenURL(longLink));
+					m.tellPlayer(player, Msg.ACCOUNT_REQUIRED);
+					m.tellPlayer(player, UrlShortener.shortenURL(longLink));
 				} else {
+					//Verifying Online Account
 					if (args[0].equalsIgnoreCase("verify")) {
-						int ver = Verify.createUserVerification(sender.getName());
-						m.sendPlayerMessage(player, "Your verification code is: " + ver);
+						ver = Verify.createUserVerification(player.getName());
+						m.tellPlayer(player, "Your verification code is: " + ver);
+					//Accepting Trade	
 					} else if (args[0].equalsIgnoreCase("accept")) {
-						if (args.length == 2 && args[1].matches("[0-9]+")) {
-							int id = Integer.parseInt(args[1]);
-							String mcTrader = DatabaseManager.getTradeUsername(id);
-							if (!(mcTrader.equals(sender.getName()))) {
-
-								if (MCTrade.checkIP == true) {
-									if (!(player.getAddress().getAddress().getHostAddress().equals(DatabaseManager.getTraderIP(id)))) {
-										tradeGo = false;
-									} else {
-										tradeGo = true;
-									}
-								}
-
-								if (tradeGo == true) {
-									int tradeStatus = DatabaseManager.getTradeStatus(id);
-									if (tradeStatus == 1) {
-										double cost = DatabaseManager.getItemCost(id);
-										// int amount =
-										// DatabaseManager.getTradeAmount(id);
-										if (MCTrade.econ.getBalance(sender.getName()) >= cost) {
-											AcceptTrade accept = new AcceptTrade(Integer.parseInt(args[1]), player);
-											m.sendPlayerMessage(player, "You have sucessfully purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s");
-
-											MCTrade.econ.withdrawPlayer(sender.getName(), (cost));
-											MCTrade.econ.depositPlayer(DatabaseManager.getTradeUsername(id), (cost));
-										} else {
-											m.sendPlayerMessage(player, "Sorry, that trade costs: " + cost + " and you only have: " + MCTrade.econ.getBalance(sender.getName()));
-										}
-									} else if (tradeStatus == 2) {
-										m.sendPlayerMessage(player, "This trade has already been accepted!");
-									} else if (tradeStatus == 3) {
-										m.sendPlayerMessage(player, "This trade is hidden");
-									}
-								} else {
-									m.sendPlayerMessage(player, "You cannot accept your own trades");
-								}
-							} else {
-								m.sendPlayerMessage(player, "You cannot accept your own trades");
-							}
-						} else {
-							m.sendPlayerMessage(player, "Please enter the trade ID using /mctrade accept <id>");
-						}
+						AcceptTrade(player, args);
+					//Creating Trade
 					} else if (args[0].matches("[0-9]+")) {
+<<<<<<< HEAD
 						if (!(getItemMaterial().toString().equals("AIR"))) {
 							if(args.length == 2 && args[1].matches("[0-9]+")) {
 								int tempItemAmount = Integer.parseInt(args[1]);
@@ -154,9 +120,8 @@ public class PlayerCommands implements CommandExecutor {
 										"To prevent abuse, tax is charged on your item, on purchase rather then when your trade is accepted. Tax is based on the price you set the trade at and the tax for this one is: "
 												+ taxAmount + "And you only have " + balance);
 							}
-						} else {
-							m.sendPlayerMessage(player, "I know air is cool an all, but I just cannot let you sell that :)");
-						}
+=======
+						CreateTrade(player, args);
 					}
 				}
 			}
@@ -165,7 +130,111 @@ public class PlayerCommands implements CommandExecutor {
 		}
 		return false;
 	}
+	private void AcceptTrade(Player player,String[] args) {
+		if (args.length == 2 && args[1].matches("[0-9]+")) {
+			id = Integer.parseInt(args[1]);
+			String mcTrader = DatabaseManager.getTradeUsername(id);
+			if (!(mcTrader.equals(player.getName()))) {
 
+				if (MCTrade.checkIP == true) {
+					if (!(player.getAddress().getAddress().getHostAddress().equals(DatabaseManager.getTraderIP(id)))) {
+						tradeGo = false;
+					} else {
+						tradeGo = true;
+					}
+				}
+
+				if (tradeGo == true) {
+					tradeStatus = DatabaseManager.getTradeStatus(id);
+					if (tradeStatus == 1) {
+						double cost = DatabaseManager.getItemCost(id);
+						if (MCTrade.econ.getBalance(player.getName()) >= cost) {
+							AcceptTrade accept = new AcceptTrade(Integer.parseInt(args[1]), player);
+							m.tellPlayer(player, "You have sucessfully purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s");
+							MCTrade.econ.withdrawPlayer(player.getName(), (cost));
+							MCTrade.econ.depositPlayer(DatabaseManager.getTradeUsername(id), (cost));
+>>>>>>> v1.1
+						} else {
+							m.tellPlayer(player, "Sorry, that trade costs: " + cost + " and you only have: " + MCTrade.econ.getBalance(player.getName()));
+						}
+					} else if (tradeStatus == 2) {
+						m.tellPlayer(player, Msg.TRADE_ALREADY_ACCEPTED);
+					} else if (tradeStatus == 3) {
+						m.tellPlayer(player, Msg.TRADE_ALREADY_HIDDEN);
+					}
+				} else {
+					m.tellPlayer(player, Msg.TRADE_CANNOT_ACCEPT_OWN);
+				}
+			} else {
+				m.tellPlayer(player, Msg.TRADE_CANNOT_ACCEPT_OWN);
+			}
+		} else {
+			m.tellPlayer(player, Msg.TRADE_ACCEPT_USAGE);
+		}
+	}
+	private void CreateTrade(Player player, String[] args) {
+		if (!(getItemMaterial().toString().equals("AIR"))) {
+			if(args.length == 2 && args[1].matches("[0-9]+")) {
+				int tempItemAmount = Integer.parseInt(args[1]);
+				if( checkItemMax(player) >= tempItemAmount ){
+					setItemAmount(tempItemAmount);
+					trade = true;
+				}else {
+					trade = false;
+				}
+			}				
+			int price = Integer.parseInt(args[0]);
+			taxAmount = (price * tax);
+			double balance = (MCTrade.econ.getBalance(player.getName()));
+			if (trade == true && balance >= taxAmount) {
+				removeItem(player,getItemMaterial(),getItemAmount());
+				MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
+				int tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), getItemAmount(), args[0], player.getAddress().getAddress()
+						.getHostAddress());
+				m.tellAll(player.getName() + " has created a new trade (" + tId + ")");
+
+				m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: "
+						+ ChatColor.GRAY + price);
+				m.tellAll("Trade Info: " + UrlShortener.shortenURL(webURL + "trades.html?id=" + tId));
+				m.tellPlayer(player, "You have been charged " + taxAmount + " for the creation of this trade!");
+
+				m.info("Player " + player.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: "
+						+ getItemMaterial() + " Item ID: " + getItemId());
+			} else if (trade == false) {
+				m.tellPlayer(player, Msg.TRADE_NOT_ENOUGH_ITEMS);
+			} else if (balance < taxAmount) {
+				m.tellPlayer(player,
+						"To prevent abuse, tax is charged on your item, on purchase rather then when your trade is accepted. Tax is based on the price you set the trade at and the tax for this one is: "
+								+ taxAmount + "And you only have " + balance);
+			}
+		} else {
+			m.tellPlayer(player, Msg.TRADE_AIR);
+		}
+	}
+	//Checks global mctrade permissions
+	private boolean checkPerms(Player player) {
+		if(MCTrade.perms.has(player, "mctrade.mctrade")) {
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.*")) {
+			return true;
+		}
+		
+		return false;
+	}
+	//Checks specific permissions for sub commands in mctrade and global.
+	private boolean checkPerms(Player player, String p) {
+		if(MCTrade.perms.has(player,"mctrade." + p)){
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.mctrade")) {
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.*")) {
+			return true;
+		}
+		return false;
+	}
 	public int checkItemMax(Player p) {
 		int amount = 0;
         for(ItemStack i : p.getInventory().getContents()){
@@ -209,6 +278,12 @@ public class PlayerCommands implements CommandExecutor {
 	public boolean onTradeRemoveItem(ItemStack is, Player p) {
 		p.getInventory().removeItem(is);
 		return true;
+	}
+	private void prepareTrade(Player player){
+		setItemId(player.getItemInHand().getTypeId());
+		setItemAmount(player.getItemInHand().getAmount());
+		setItemMaterial(player.getItemInHand().getType());
+		userId = DatabaseManager.getUserId(player.getName());
 	}
 
 	public int getItemId() {
