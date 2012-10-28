@@ -1,8 +1,8 @@
 name: MCTrade
 main: me.fogest.mctrade.MCTrade
-version: 1.02
+version: 1.04
 description: Makes trading a tad bit easier
-website: http://fogest.net16.net
+website: http://fogest.com
 author: Fogest
 
 depend: [Vault]

@@ -7,6 +7,8 @@ public enum Msg {
 	TRADE_ALREADY_HIDDEN("This trade is hidden"),
 	TRADE_CANNOT_ACCEPT_OWN("You cannot accept your own trades"),
 	TRADE_ACCEPT_USAGE("Please enter the trade ID using /mctrade accept <id>"),
+	TRADE_NOT_ENOUGH_ITEMS("Sorry, you don't have that much of that item!"),
+	TRADE_AIR("I know air is cool an all, but I just cannot let you sell that :)"),
 	NONE("<none>");
 	private String msg;
 	

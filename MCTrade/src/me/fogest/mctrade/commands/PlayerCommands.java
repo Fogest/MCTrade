@@ -146,7 +146,6 @@ public class PlayerCommands implements CommandExecutor {
 				}
 			}				
 			int price = Integer.parseInt(args[0]);
-			m.tellPlayer(player, "Item: " + getItemMaterial() + " Amount: " + getItemAmount());
 			taxAmount = (price * tax);
 			double balance = (MCTrade.econ.getBalance(player.getName()));
 			if (trade == true && balance >= taxAmount) {
@@ -164,14 +163,14 @@ public class PlayerCommands implements CommandExecutor {
 				m.info("Player " + player.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: "
 						+ getItemMaterial() + " Item ID: " + getItemId());
 			} else if (trade == false) {
-				m.tellPlayer(player, "Sorry, you don't have that much of that item!");
+				m.tellPlayer(player, Msg.TRADE_NOT_ENOUGH_ITEMS);
 			} else if (balance < taxAmount) {
 				m.tellPlayer(player,
 						"To prevent abuse, tax is charged on your item, on purchase rather then when your trade is accepted. Tax is based on the price you set the trade at and the tax for this one is: "
 								+ taxAmount + "And you only have " + balance);
 			}
 		} else {
-			m.tellPlayer(player, "I know air is cool an all, but I just cannot let you sell that :)");
+			m.tellPlayer(player, Msg.TRADE_AIR);
 		}
 	}
 	//Checks global mctrade permissions
