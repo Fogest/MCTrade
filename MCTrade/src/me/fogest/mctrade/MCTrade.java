@@ -127,11 +127,11 @@ public class MCTrade extends JavaPlugin {
 	}
 	public void saveToDatabase() {
 		for(int i = 0;i < moderaters.size();i++) {
-			msg.sendToConsoleInfo(moderaters.get(i));
+			msg.info(moderaters.get(i));
 			DatabaseManager.setUserLevelForMod(moderaters.get(i));
 		}
 		for(int i = 0;i < admins.size();i++) {
-			msg.sendToConsoleInfo(admins.get(i));
+			msg.info(admins.get(i));
 			DatabaseManager.setUserLevelForAdmin(admins.get(i));
 		}
 	}

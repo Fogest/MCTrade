@@ -29,22 +29,22 @@ public class MessageHandler {
 		this.prefix = prefix;
 		plugin = MCTrade.getPlugin();
 	}
-	public void sendPlayerMessage(Player player, String message) {
+	public void tellPlayer(Player player, String message) {
 		player.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
 	}
-	public void sendPlayerMessage(Player player, Msg msg){
+	public void tellPlayer(Player player, Msg msg){
 		player.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + msg);
 	}
-	public void serverBroadCast(String message) {
+	public void tellAll(String message) {
 		plugin.getServer().broadcastMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
 	}
-	public void sendToConsoleInfo(String message){
+	public void info(String message){
 		plugin.getLogger().info(message);
 	}
-	public void sendToConsoleWarning(String message) {
+	public void warning(String message) {
 		plugin.getLogger().warning(message);
 	}
-	public void sendToConsoleSevere(String message) {
+	public void severe(String message) {
 		plugin.getLogger().severe(message);
 	}
 }
