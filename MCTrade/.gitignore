@@ -1,7 +1,9 @@
 bin
 lib
 jar
+doc
 .settings
 .project
 .classpath
 /.classpath
+

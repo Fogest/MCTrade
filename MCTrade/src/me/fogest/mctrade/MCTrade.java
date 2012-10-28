@@ -61,7 +61,7 @@ public class MCTrade extends JavaPlugin {
     
 	public MCTrade() {
 		plugin = this;
-		msg = new MessageHandler("[MCTrade]", this);
+		msg = new MessageHandler("[MCTrade]");
 		moderaters = new ArrayList<String>();
 		admins = new ArrayList<String>();
 	}

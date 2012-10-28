@@ -25,12 +25,15 @@ public class MessageHandler {
 	private String prefix;
 	private MCTrade plugin;
 	
-	public MessageHandler(String prefix, MCTrade plugin) {
+	public MessageHandler(String prefix) {
 		this.prefix = prefix;
-		this.plugin = plugin;
+		plugin = MCTrade.getPlugin();
 	}
-	public void sendPlayerMessage(Player p, String message) {
-		p.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
+	public void sendPlayerMessage(Player player, String message) {
+		player.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
+	}
+	public void sendPlayerMessage(Player player, Msg msg){
+		player.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + msg);
 	}
 	public void serverBroadCast(String message) {
 		plugin.getServer().broadcastMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);

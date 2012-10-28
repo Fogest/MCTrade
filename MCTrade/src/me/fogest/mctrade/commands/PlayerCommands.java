@@ -26,18 +26,17 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.MessageHandler;
+import me.fogest.mctrade.Msg;
 import me.fogest.mctrade.UrlShortener;
 import me.fogest.mctrade.Verify;
 import me.fogest.mctrade.AcceptTrade;
 
 public class PlayerCommands implements CommandExecutor {
-	private MCTrade plugin;
 	private int itemId;
 	private int itemAmount;
 	private Material itemMaterial;
@@ -46,38 +45,38 @@ public class PlayerCommands implements CommandExecutor {
 	private double tax = MCTrade.tax;
 	private double taxAmount;
 	private String webURL = MCTrade.webAddress;
+	private String longLink = webURL + "registration.php";
 
 	private boolean trade = true;
 	private boolean tradeGo = true;
+	
+	private int userId, ver, id, tradeStatus;
+	
+	//Command Handlers
 
 	public PlayerCommands(final MCTrade plugin, MessageHandler m) {
-		this.plugin = plugin;
 		this.m = m;
 	}
 
 	public boolean onCommand(final CommandSender sender, final Command command, String cmdLabel, String[] args) {
-		if (MCTrade.perms.has(sender, "mctrade.mctrade") || MCTrade.perms.has(sender, "mctrade.*")) {
-
+		Player player = (Player) sender;
+		if (checkPerms(player)) {
 			if (args.length <= 0) {
-				Player player = (Player) sender;
-				m.sendPlayerMessage(player, "Command Usage : /mctrade <totalCost> [Amount]. The item in your hand is the item being traded!");
-			} else if (args.length >= 1) {
-				Player player = (Player) sender;
-				setItemId(player.getItemInHand().getTypeId());
-				setItemAmount(player.getItemInHand().getAmount());
-				setItemMaterial(player.getItemInHand().getType());
-				int userId = DatabaseManager.getUserId(sender.getName());
+				m.sendPlayerMessage(player,Msg.COMMAND_USAGE);
+			} 
+			else if (args.length >= 1) {
+				prepareTrade(player);
+
 				if (userId == 0) {
-					String longLink = webURL + "registration.html";
-					m.sendPlayerMessage(player, "You need an account with MCTrade to do this! Visit the following link to register: ");
+					m.sendPlayerMessage(player, Msg.ACCOUNT_REQUIRED);
 					m.sendPlayerMessage(player, UrlShortener.shortenURL(longLink));
 				} else {
 					if (args[0].equalsIgnoreCase("verify")) {
-						int ver = Verify.createUserVerification(sender.getName());
+						ver = Verify.createUserVerification(sender.getName());
 						m.sendPlayerMessage(player, "Your verification code is: " + ver);
 					} else if (args[0].equalsIgnoreCase("accept")) {
 						if (args.length == 2 && args[1].matches("[0-9]+")) {
-							int id = Integer.parseInt(args[1]);
+							id = Integer.parseInt(args[1]);
 							String mcTrader = DatabaseManager.getTradeUsername(id);
 							if (!(mcTrader.equals(sender.getName()))) {
 
@@ -90,11 +89,9 @@ public class PlayerCommands implements CommandExecutor {
 								}
 
 								if (tradeGo == true) {
-									int tradeStatus = DatabaseManager.getTradeStatus(id);
+									tradeStatus = DatabaseManager.getTradeStatus(id);
 									if (tradeStatus == 1) {
 										double cost = DatabaseManager.getItemCost(id);
-										// int amount =
-										// DatabaseManager.getTradeAmount(id);
 										if (MCTrade.econ.getBalance(sender.getName()) >= cost) {
 											AcceptTrade accept = new AcceptTrade(Integer.parseInt(args[1]), player);
 											m.sendPlayerMessage(player, "You have sucessfully purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s");
@@ -130,34 +127,11 @@ public class PlayerCommands implements CommandExecutor {
 								}
 							}				
 							int price = Integer.parseInt(args[0]);
+							m.sendPlayerMessage(player, "Item: " + getItemMaterial() + " Amount: " + getItemAmount());
 							taxAmount = (price * tax);
 							double balance = (MCTrade.econ.getBalance(sender.getName()));
 							if (trade == true && balance >= taxAmount) {
-								ItemStack[] contents = player.getInventory().getContents();
-								int counter = 0;
-								for( ItemStack stack : Arrays.asList(contents) ){
-									if(stack == null){
-										continue;
-									}
-									if(stack.getTypeId() != getItemId()){
-										continue;
-									}
-									if(stack.getAmount() < itemAmount){
-										contents[counter] = null;
-										itemAmount-=stack.getAmount();
-									}
-									if(stack.getAmount() == itemAmount){
-										contents[counter] = null;
-										break;
-									}
-									if(stack.getAmount() > itemAmount){
-										stack.setAmount(stack.getAmount() - itemAmount);
-										contents[counter] = stack;
-										break;
-									}
-									counter++;
-								}
-								player.getInventory().setContents(contents);
+								removeItem(player,getItemMaterial(),getItemAmount());
 								MCTrade.econ.withdrawPlayer(sender.getName(), taxAmount);
 								int tId = DatabaseManager.createTrade(sender.getName(), getItemId(), getItemMaterial().toString(), getItemAmount(), args[0], player.getAddress().getAddress()
 										.getHostAddress());
@@ -189,6 +163,30 @@ public class PlayerCommands implements CommandExecutor {
 		return false;
 	}
 
+	//Checks global mctrade permissions
+	boolean checkPerms(Player player) {
+		if(MCTrade.perms.has(player, "mctrade.mctrade")) {
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.*")) {
+			return true;
+		}
+		
+		return false;
+	}
+	//Checks specific permissions for sub commands in mctrade and global.
+	boolean checkPerms(Player player, String p) {
+		if(MCTrade.perms.has(player,"mctrade." + p)){
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.mctrade")) {
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.*")) {
+			return true;
+		}
+		return false;
+	}
 	public int checkItemMax(Player p) {
 		int amount = 0;
         for(ItemStack i : p.getInventory().getContents()){
@@ -201,10 +199,43 @@ public class PlayerCommands implements CommandExecutor {
           }
 		return amount;
 	}
+	public void removeItem(Player player, Material type, int amount){
+		    ItemStack[] contents = player.getInventory().getContents();
+		    int counter = 0;
+		    for( ItemStack stack : Arrays.asList(contents) ){
+		      if(stack == null){
+		        continue;
+		      }
+		      if(!(stack.getType().equals(type))){
+		        continue;
+		      }
+		      if(stack.getAmount() < amount){
+		        contents[counter] = null;
+		        amount-=stack.getAmount();
+		      }
+		      if(stack.getAmount() == amount){
+		        contents[counter] = null;
+		        break;
+		      }
+		      if(stack.getAmount() > amount){
+		        stack.setAmount(stack.getAmount() - amount);
+		        contents[counter] = stack;
+		        break;
+		      }
+		      counter++;
+		    }
+		    player.getInventory().setContents(contents);
+		  }
 
 	public boolean onTradeRemoveItem(ItemStack is, Player p) {
 		p.getInventory().removeItem(is);
 		return true;
+	}
+	private void prepareTrade(Player player){
+		setItemId(player.getItemInHand().getTypeId());
+		setItemAmount(player.getItemInHand().getAmount());
+		setItemMaterial(player.getItemInHand().getType());
+		userId = DatabaseManager.getUserId(player.getName());
 	}
 
 	public int getItemId() {
