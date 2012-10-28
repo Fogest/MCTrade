@@ -21,25 +21,48 @@ package me.fogest.mctrade.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.MessageHandler;
 
 public class Admin implements CommandExecutor {
-	private MCTrade plugin;
 	private MessageHandler m;
 	public Admin(final MCTrade plugin, MessageHandler m) {
-		this.plugin = plugin;
 		this.m = m;
 	}
 
 	public boolean onCommand(final CommandSender sender, final Command command,
 	final String cmdLabel, final String[] args) {
-			if(MCTrade.perms.has(sender,"mctrade.trade") || MCTrade.perms.has(sender, "mctrade.*")) {
-				plugin.getLogger().info("Console: Trade Works");
-				sender.sendMessage("Player: Trade Works");
-				plugin.getLogger().info("Console: Trade Works");
+		Player player = (Player) sender;
+			if(checkPerms(player)) {
+				m.tellPlayer(player, "This command is in the test phase right now! It literally does nothing, but nice job finding it!");
 				return true;
 			}
+		return false;
+	}
+	//Checks global mctrade permissions
+	private boolean checkPerms(Player player) {
+		if(MCTrade.perms.has(player, "mctrade.trade")) {
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.*")) {
+			return true;
+		}
+		
+		return false;
+	}
+	//Checks specific permissions for sub commands in mctrade and global.
+	private boolean checkPerms(Player player, String p) {
+		if(MCTrade.perms.has(player,"mctrade.trade." + p)){
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.trade")) {
+			return true;
+		}
+		else if(MCTrade.perms.has(player, "mctrade.*")) {
+			return true;
+		}
 		return false;
 	}
 }
