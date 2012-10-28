@@ -1,5 +1,6 @@
 <?php
 include 'php/functions.php';
+include 'php/config.php';
 ?>
 <!DOCTYPE html>
 <html lang="en"> 
@@ -20,7 +21,7 @@ include_once 'body-head.php'?>
 			<?php
 			if (!$_POST['submit'] ) {
 			?>
-				<form action="registration.html" method="post" class="contact-form" id="SendContact" name="SendContact"/>
+				<form action="registration.php" method="post" class="contact-form" id="SendContact" name="SendContact"/>
 
 					<label class="required">Username</label>
 					<input type="text" name="username" value="" class="required" maxlength="32" />
@@ -96,25 +97,30 @@ include_once 'body-head.php'?>
 				$check_mcname = mysql_query("SELECT * FROM mctrade_users WHERE minecraft_name='$mcUsername'");
 				$check_email = mysql_query("SELECT * FROM mctrade_users WHERE email='$email'");
 					if(mysql_num_rows($check_username)>=1) {
-						echo "Username already taken! \n";
+						die ("Username already taken! \n");
+						exit();
 					}
 					if(mysql_num_rows($check_mcname)>=1) {
-						echo "\nMinecraft account has already been bound to another account! Click the Contact tab if this is an error!";
+						die ("\nMinecraft account has already been bound to another account! Click the Contact tab if this is an error!");
+						exit();
 					}
 					if(mysql_num_rows($check_email)>=1) {
-						echo "\nEmail already used! \n";
+						die ("\nEmail already used! \n");
+						exit();
 					}
 					else {
 					$code = md5($email);
-					
+					$messageCompiled = $siteURL."php/activate.php?code=".$code;
+					$messageCompiledNoSpace = str_replace(' ', '', $messageCompiled);
 					//Send activation email
 					$to = $email;
 					$subject = "Activate your account - MCTrade";
 					$headers = "From: fogestjv@gmail.com";
-					$body = "Hello $username, \n\nYou registered and need to activate your account. Click the link below or paste it into the URL bar of your browser\n\nhttp://fogest.net16.net/mctrade/php/activate.php?code=$code\n\nThanks!";
+					$body = "Hello $username, \n\nYou registered and need to activate your account. Click the link below or paste it into the URL bar of your browser\n\n$messageCompiledNoSpace\n\nThanks!";
 					
 					if(!mail($to,$subject,$body,$header)) {
-						echo "We couldn't sign you up at this time. Please try again later. Sending email failed!"; 
+						die ("We couldn't sign you up at this time. Please try again later. Sending email failed!"); 
+						exit();
 					}
 					else
 					{

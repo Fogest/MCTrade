@@ -59,7 +59,7 @@ include_once 'body-head.php'?>
 							{
 								$_SESSION['username'] = $username;
 							}
-							header("Location: member.html");
+							header("Location: member.php");
 							exit();
 						}
 					}

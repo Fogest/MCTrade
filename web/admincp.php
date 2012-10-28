@@ -18,7 +18,7 @@ include 'php/functions.php';
 
 <?php 
 $bodyTitle = "Admin CP";
-$bodySubTitle = "Only the best of the best can get in here (Admins + Fog)";
+$bodySubTitle = "Secret, unfinished admin panel";
 $bodyLocation = "Admin CP";
 $bodyTab = "admincp";
 include_once 'body-head.php'?>

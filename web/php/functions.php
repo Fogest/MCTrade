@@ -21,7 +21,7 @@ function getUsername()
 		return $_SESSION['username'];
 	}
 	else if(isset($_COOKIE['username'])) {
-		return $COOKIE['username'];
+		return $_COOKIE['username'];
 	}
 
 }

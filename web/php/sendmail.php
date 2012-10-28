@@ -36,7 +36,7 @@ if ($_POST['name']) { // If the form is trying to post value of username field
 		$senderIP
         ";
         // Set headers configurations
-        $headers  = 'MIME-Version: 1.0' . "rn";
+        $headers  = 'MIME-Version: 1.0' . "/r/n";
         $headers .= "Content-type: textrn";
         $headers .= "From: $fromrn";
         // Mail it now using PHP's mail function

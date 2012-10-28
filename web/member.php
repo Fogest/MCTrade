@@ -1,7 +1,7 @@
 <?php
 include 'php/functions.php';
 	if(!loggedin()) {
-	header("Location: login.html");
+	header("Location: login.php");
 	exit();
 	}
 ?>
