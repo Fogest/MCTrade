@@ -2,7 +2,9 @@ package me.fogest.mctrade;
 
 
 public enum Msg {
-	COMMAND_USAGE("Command Usage : /mctrade <totalCost> [Amount]. The item in your hand is the item being traded!"),
+	COMMAND_USAGE("Type /mct help for a list of commands and some info about them!"),
+	COMMAND_HELP("/mct <price> --> Used to create a trade. Replace price with the your asking price for your current item stack." +
+			"\nTest"),
 	ACCOUNT_REQUIRED("You need an account with MCTrade to do this! Visit the following link to register: "),
 	TRADE_ALREADY_ACCEPTED("This trade has already been accepted!"),
 	TRADE_ALREADY_HIDDEN("This trade is hidden"),

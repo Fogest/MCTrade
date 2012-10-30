@@ -66,6 +66,9 @@ public class PlayerCommands implements CommandExecutor {
 		}
 		// Checking if the user actually put something after /mct
 		else if (args.length >= 1) {
+			if(args[0].equalsIgnoreCase("help") && checkPerms(player,"help")) {
+				m.tellPlayer(player, Msg.COMMAND_HELP);
+			}
 			// Attempt trade creation command if second var is number
 			if (args[0].matches("[0-9]+") && checkPerms(player,"trade")) {
 				prepareTrade(player);
@@ -191,9 +194,6 @@ public class PlayerCommands implements CommandExecutor {
 				m.tellAll(player.getName() + " has created a new trade (" + tId + ")");
 				m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY + price);
 				m.tellPlayer(player, "You have been charged " + taxAmount + " for the creation of this trade!");
-
-				m.info("Player " + player.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial()
-						+ " Item ID: " + getItemId());
 			} else if (trade == false) {
 				m.tellPlayer(player, Msg.TRADE_NOT_ENOUGH_ITEMS);
 			} else if (balance < taxAmount) {
