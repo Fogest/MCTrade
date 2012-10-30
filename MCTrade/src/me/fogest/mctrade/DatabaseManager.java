@@ -161,6 +161,23 @@ public class DatabaseManager {
     	
     	return curTrades;
     }
+    public static int getActiveLevel(String player) {
+    	int active = 0;
+        try {
+            PreparedStatement ps = db.getConnection().prepareStatement("SELECT `active` FROM `mctrade_users` WHERE `minecraft_name` = ?");
+            ps.setString(1, player);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+            	active = rs.getInt("active");
+            }
+            ps.close();
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return active;
+    }
 
     public static int createUser(String player){
         if(!db.checkConnection()) return 0;

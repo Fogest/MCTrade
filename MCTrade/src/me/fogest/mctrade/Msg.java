@@ -11,6 +11,9 @@ public enum Msg {
 	TRADE_AIR("I know air is cool an all, but I just cannot let you sell that :)"),
 	PERMISSION_DENIED("Sorry, but you don't have the correct permissions for this command!"),
 	USERID_GET_ERROR("Error getting userId. This may be a database error! Inform a staff member of this issue!"),
+	ALREADY_VERIFIED("No need to verify again, our records indicate you already have been verified"),
+	GENERAL_ERROR("It appears some sort of error occured! Database down?"),
+	NOT_ACTIVE("It appears you have not verified your account yet! Do /mct verify to get started!"),
 	NONE("<none>");
 	private String msg;
 	

@@ -49,10 +49,10 @@ public class PlayerCommands implements CommandExecutor {
 
 	private boolean trade = true;
 	private boolean tradeGo = true;
-	
+
 	private int userId, ver, id, tradeStatus;
-	
-	//Command Handlers
+
+	// Command Handlers
 
 	public PlayerCommands(final MCTrade plugin, MessageHandler m) {
 		this.m = m;
@@ -60,40 +60,74 @@ public class PlayerCommands implements CommandExecutor {
 
 	public boolean onCommand(final CommandSender sender, final Command command, String cmdLabel, String[] args) {
 		Player player = (Player) sender;
-		//Checks players global permissions.
-		if (checkPerms(player)) {
-			//Gives usage message if player simply inputs /mct
-			if (args.length <= 0) {
-				m.tellPlayer(player,Msg.COMMAND_USAGE);
-			} 
-			//Checking if the user actually put something after /mct
-			else if (args.length >= 1) {
+		// Gives usage message if player simply inputs /mct
+		if (args.length <= 0 && checkPerms(player, "mctrade")) {
+			m.tellPlayer(player, Msg.COMMAND_USAGE);
+		}
+		// Checking if the user actually put something after /mct
+		else if (args.length >= 1) {
+			// Attempt trade creation command if second var is number
+			if (args[0].matches("[0-9]+") && checkPerms(player,"trade")) {
 				prepareTrade(player);
-				
-				//Checking if user has an account or not.
-				if (userId == 0) {
+				int active = DatabaseManager.getActiveLevel(player.getName());
+				if (userId > 1 && active == 2) {
+					CreateTrade(player, args);
+				}
+				else if(active != 2){
+					m.tellPlayer(player, Msg.NOT_ACTIVE);
+				}
+				else if (userId < 1) {
 					m.tellPlayer(player, Msg.ACCOUNT_REQUIRED);
 					m.tellPlayer(player, UrlShortener.shortenURL(longLink));
 				} else {
-					//Verifying Online Account
-					if (args[0].equalsIgnoreCase("verify")) {
-						ver = Verify.createUserVerification(player.getName());
-						m.tellPlayer(player, "Your verification code is: " + ver);
-					//Accepting Trade	
-					} else if (args[0].equalsIgnoreCase("accept")) {
-						AcceptTrade(player, args);
-					//Creating Trade
-					} else if (args[0].matches("[0-9]+")) {
-						CreateTrade(player, args);
-					}
+					m.tellPlayer(player, Msg.USERID_GET_ERROR);
 				}
 			}
-
-			return true;
+			// Verifying Online Account
+			else if (args[0].equalsIgnoreCase("verify") && checkPerms(player, "verify")) {
+				userId = getUserId(player);
+				int active = DatabaseManager.getActiveLevel(player.getName());
+				if(active < 2 && userId > 0) {
+					ver = Verify.createUserVerification(player.getName());
+					m.tellPlayer(player, "Your verification code is: " + ver);
+					m.tellPlayer(player, "Enter this code on the site");
+				}
+				else if(active == 2) {
+					m.tellPlayer(player, Msg.ALREADY_VERIFIED);
+				}
+				else if(userId < 1){
+					m.tellPlayer(player, Msg.ACCOUNT_REQUIRED);
+					m.tellPlayer(player, UrlShortener.shortenURL(longLink));
+				}
+				else {
+					m.tellPlayer(player, Msg.GENERAL_ERROR);
+				}
+			} 
+			// Accepting Trade
+			else if (args[0].equalsIgnoreCase("accept") && checkPerms(player, "accept")) {
+				userId = getUserId(player);
+				int active = DatabaseManager.getActiveLevel(player.getName());
+				if(active == 2 && userId > 0) {
+					AcceptTrade(player, args);
+				}
+				else if(active != 2){
+					m.tellPlayer(player, Msg.NOT_ACTIVE);
+				}
+				else if(userId < 1){
+					m.tellPlayer(player, Msg.ACCOUNT_REQUIRED);
+					m.tellPlayer(player, UrlShortener.shortenURL(longLink));
+				}
+				else {
+					m.tellPlayer(player, Msg.GENERAL_ERROR);
+				}
+				
+				
+			}
 		}
 		return false;
 	}
-	private void AcceptTrade(Player player,String[] args) {
+
+	private void AcceptTrade(Player player, String[] args) {
 		if (args.length == 2 && args[1].matches("[0-9]+")) {
 			id = Integer.parseInt(args[1]);
 			String mcTrader = DatabaseManager.getTradeUsername(id);
@@ -134,34 +168,33 @@ public class PlayerCommands implements CommandExecutor {
 			m.tellPlayer(player, Msg.TRADE_ACCEPT_USAGE);
 		}
 	}
+
 	private void CreateTrade(Player player, String[] args) {
 		if (!(getItemMaterial().toString().equals("AIR"))) {
-			if(args.length == 2 && args[1].matches("[0-9]+")) {
+			if (args.length == 2 && args[1].matches("[0-9]+")) {
 				int tempItemAmount = Integer.parseInt(args[1]);
-				if( checkItemMax(player) >= tempItemAmount ){
+				if (checkItemMax(player) >= tempItemAmount) {
 					setItemAmount(tempItemAmount);
 					trade = true;
-				}else {
+				} else {
 					trade = false;
 				}
-			}				
+			}
 			int price = Integer.parseInt(args[0]);
 			taxAmount = (price * tax);
 			double balance = (MCTrade.econ.getBalance(player.getName()));
 			if (trade == true && balance >= taxAmount) {
-				removeItem(player,getItemMaterial(),getItemAmount());
+				removeItem(player, getItemMaterial(), getItemAmount());
 				MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-				int tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), getItemAmount(), args[0], player.getAddress().getAddress()
-						.getHostAddress());
+				int tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
 				m.tellAll(player.getName() + " has created a new trade (" + tId + ")");
 
-				m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: "
-						+ ChatColor.GRAY + price);
+				m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY + price);
 				m.tellAll("Trade Info: " + UrlShortener.shortenURL(webURL + "trades.html?id=" + tId));
 				m.tellPlayer(player, "You have been charged " + taxAmount + " for the creation of this trade!");
 
-				m.info("Player " + player.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: "
-						+ getItemMaterial() + " Item ID: " + getItemId());
+				m.info("Player " + player.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial()
+						+ " Item ID: " + getItemId());
 			} else if (trade == false) {
 				m.tellPlayer(player, Msg.TRADE_NOT_ENOUGH_ITEMS);
 			} else if (balance < taxAmount) {
@@ -173,79 +206,82 @@ public class PlayerCommands implements CommandExecutor {
 			m.tellPlayer(player, Msg.TRADE_AIR);
 		}
 	}
-	//Checks global mctrade permissions
+
+	// Checks global mctrade permissions
 	private boolean checkPerms(Player player) {
-		if(MCTrade.perms.has(player, "mctrade.mctrade")) {
+		if (MCTrade.perms.has(player, "mctrade.*")) {
 			return true;
 		}
-		else if(MCTrade.perms.has(player, "mctrade.*")) {
-			return true;
-		}
-		
+		m.tellPlayer(player, Msg.PERMISSION_DENIED);
 		return false;
 	}
-	//Checks specific permissions for sub commands in mctrade and global.
+
+	// Checks specific permissions for sub commands in mctrade and global.
 	private boolean checkPerms(Player player, String p) {
-		if(MCTrade.perms.has(player,"mctrade." + p)){
+		if (MCTrade.perms.has(player, "mctrade." + p)) {
+			return true;
+		} else if (MCTrade.perms.has(player, "mctrade.*")) {
 			return true;
 		}
-		else if(MCTrade.perms.has(player, "mctrade.mctrade")) {
-			return true;
-		}
-		else if(MCTrade.perms.has(player, "mctrade.*")) {
-			return true;
-		}
+		m.tellPlayer(player, Msg.PERMISSION_DENIED);
 		return false;
 	}
+
 	public int checkItemMax(Player p) {
 		int amount = 0;
-        for(ItemStack i : p.getInventory().getContents()){
-        	if(i == null) {
-        		continue;
-        		}
-            if(i.getType().equals(getItemMaterial())){
-              amount = amount + i.getAmount();
-            }
-          }
+		for (ItemStack i : p.getInventory().getContents()) {
+			if (i == null) {
+				continue;
+			}
+			if (i.getType().equals(getItemMaterial())) {
+				amount = amount + i.getAmount();
+			}
+		}
 		return amount;
 	}
-	public void removeItem(Player player, Material type, int amount){
-		    ItemStack[] contents = player.getInventory().getContents();
-		    int counter = 0;
-		    for( ItemStack stack : Arrays.asList(contents) ){
-		      if(stack == null){
-		        continue;
-		      }
-		      if(!(stack.getType().equals(type))){
-		        continue;
-		      }
-		      if(stack.getAmount() < amount){
-		        contents[counter] = null;
-		        amount-=stack.getAmount();
-		      }
-		      if(stack.getAmount() == amount){
-		        contents[counter] = null;
-		        break;
-		      }
-		      if(stack.getAmount() > amount){
-		        stack.setAmount(stack.getAmount() - amount);
-		        contents[counter] = stack;
-		        break;
-		      }
-		      counter++;
-		    }
-		    player.getInventory().setContents(contents);
-		  }
+
+	public void removeItem(Player player, Material type, int amount) {
+		ItemStack[] contents = player.getInventory().getContents();
+		int counter = 0;
+		for (ItemStack stack : Arrays.asList(contents)) {
+			if (stack == null) {
+				continue;
+			}
+			if (!(stack.getType().equals(type))) {
+				continue;
+			}
+			if (stack.getAmount() < amount) {
+				contents[counter] = null;
+				amount -= stack.getAmount();
+			}
+			if (stack.getAmount() == amount) {
+				contents[counter] = null;
+				break;
+			}
+			if (stack.getAmount() > amount) {
+				stack.setAmount(stack.getAmount() - amount);
+				contents[counter] = stack;
+				break;
+			}
+			counter++;
+		}
+		player.getInventory().setContents(contents);
+	}
 
 	public boolean onTradeRemoveItem(ItemStack is, Player p) {
 		p.getInventory().removeItem(is);
 		return true;
 	}
-	private void prepareTrade(Player player){
+
+	private void prepareTrade(Player player) {
 		setItemId(player.getItemInHand().getTypeId());
 		setItemAmount(player.getItemInHand().getAmount());
 		setItemMaterial(player.getItemInHand().getType());
 		userId = DatabaseManager.getUserId(player.getName());
+	}
+
+	private int getUserId(Player player) {
+		return DatabaseManager.getUserId(player.getName());
 	}
 
 	public int getItemId() {
