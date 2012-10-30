@@ -33,7 +33,7 @@ public class MessageHandler {
 		player.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
 	}
 	public void tellPlayer(Player player, Msg msg){
-		player.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + msg);
+		player.sendMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + msg.toString());
 	}
 	public void tellAll(String message) {
 		plugin.getServer().broadcastMessage(ChatColor.GOLD + prefix + ChatColor.WHITE + message);
