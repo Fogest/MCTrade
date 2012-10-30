@@ -95,7 +95,7 @@ if($username) { ?>
 	if($mcUsername!="") {
 	if($tradeStatus!=3) {
 		echo "<tr>";
-		echo "<td class='first-td'><a href='trades.html?id=$tradeID'>$tradeID</a></td>";
+		echo "<td class='first-td'><a href='trades.php?id=$tradeID'>$tradeID</a></td>";
 		echo "<td>$mcUsername</td>";
 		echo "<td>$blockName</td>";
 		echo "<td>$quantity</td>";
@@ -121,7 +121,7 @@ if($username) { ?>
 					<?php
 					if (!$_POST['submit'] && getActive() == 1) {
 					?>
-					<form action="member.html#Verify" method="post" class="contact-form" id="SendContact" name="SendContact"/>
+					<form action="member.php#Verify" method="post" class="contact-form" id="SendContact" name="SendContact"/>
 					
 					<label class="required">Verification Code (Type /mctrade verify in-game to get this code)</label>
 					<input type="text" name="mcVerify" value="" class="required" maxlength="10"/>
