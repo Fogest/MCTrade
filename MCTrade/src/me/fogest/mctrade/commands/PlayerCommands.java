@@ -70,7 +70,7 @@ public class PlayerCommands implements CommandExecutor {
 			if (args[0].matches("[0-9]+") && checkPerms(player,"trade")) {
 				prepareTrade(player);
 				int active = DatabaseManager.getActiveLevel(player.getName());
-				if (userId > 1 && active == 2) {
+				if (userId > 0 && active == 2) {
 					CreateTrade(player, args);
 				}
 				else if(active != 2){
@@ -189,9 +189,7 @@ public class PlayerCommands implements CommandExecutor {
 				MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
 				int tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
 				m.tellAll(player.getName() + " has created a new trade (" + tId + ")");
-
 				m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY + price);
-				m.tellAll("Trade Info: " + UrlShortener.shortenURL(webURL + "trades.html?id=" + tId));
 				m.tellPlayer(player, "You have been charged " + taxAmount + " for the creation of this trade!");
 
 				m.info("Player " + player.getName() + " has created a trade with the following info: Price:" + args[0] + " Item Amount: " + getItemAmount() + " Item: " + getItemMaterial()
