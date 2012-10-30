@@ -17,8 +17,15 @@ permissions:
     description: Gives access to all MCTrade Commands
     children:
       mctrade.mctrade : true
-      mctrade.trade: true
+      mctrade.verify : true
+      mctrade.accept : true
+    default: op
   mctrade.mctrade:
     description: Basic command used to see /mctrade usage info
     default: true
-
+  mctrade.verify:
+    description: Allows users to use /mct verify to verify their website account!
+    default: true
+  mctrade.accept:
+    description: Allows users to use /mct accept to accept a trade.
+    default: true
