@@ -91,6 +91,7 @@ public class PlayerCommands implements CommandExecutor {
 					ver = Verify.createUserVerification(player.getName());
 					m.tellPlayer(player, "Your verification code is: " + ver);
 					m.tellPlayer(player, "Enter this code on the site");
+					m.tellPlayer(player,"" + webURL);
 				}
 				else if(active == 2) {
 					m.tellPlayer(player, Msg.ALREADY_VERIFIED);
