@@ -9,6 +9,8 @@ public enum Msg {
 	TRADE_ACCEPT_USAGE("Please enter the trade ID using /mctrade accept <id>"),
 	TRADE_NOT_ENOUGH_ITEMS("Sorry, you don't have that much of that item!"),
 	TRADE_AIR("I know air is cool an all, but I just cannot let you sell that :)"),
+	PERMISSION_DENIED("Sorry, but you don't have the correct permissions for this command!"),
+	USERID_GET_ERROR("Error getting userId. This may be a database error! Inform a staff member of this issue!"),
 	NONE("<none>");
 	private String msg;
 	
@@ -17,6 +19,9 @@ public enum Msg {
     }
     public void set(String msg) {
     	this.msg = msg;
+    }
+    public String toString() {
+    	return this.msg.toString();
     }
 	
 }
