@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import me.fogest.mctrade.commands.Admin;
 import me.fogest.mctrade.commands.PlayerCommands;
 import me.fogest.mctrade.listeners.Chat;
 
@@ -74,7 +73,6 @@ public class MCTrade extends JavaPlugin {
 
 		// Registering the command executors
 		getCommand("mctrade").setExecutor(new PlayerCommands(this,msg));
-		getCommand("trade").setExecutor(new Admin(this,msg));
 		DatabaseManager.enableDB();
 		
 		econ = getProvider(Economy.class);

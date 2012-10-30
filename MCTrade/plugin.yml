@@ -1,10 +1,6 @@
 name: MCTrade
 main: me.fogest.mctrade.MCTrade
-<<<<<<< HEAD
-version: 1.03
-=======
-version: 1.04
->>>>>>> v1.1
+version: 1.05
 description: Makes trading a tad bit easier
 website: http://fogest.com
 author: Fogest
@@ -15,8 +11,6 @@ commands:
   mctrade:
     description: Used to start a trade
     aliases: [mct]
-  trade:
-    description: Used to perform administrative commands
 
 permissions:
   mctrade.*:
@@ -27,7 +21,4 @@ permissions:
   mctrade.mctrade:
     description: Basic command used to see /mctrade usage info
     default: true
-  mctrade.trade:
-    description: Allows you to perform administrative commands
-    default: op
 
