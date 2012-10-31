@@ -24,6 +24,8 @@ permissions:
   mctrade.mctrade:
     description: Basic command used to see /mctrade usage info
     default: true
+  mctrade.help:
+    description: Allows user to use /mct help to list commands and functions of those commands!
   mctrade.trade:
     description: Allows user to use /mct (num 1-9) to create a trade!
     default: true
