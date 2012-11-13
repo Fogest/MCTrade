@@ -6,10 +6,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">MCTrade</a>
+          <a class="brand" href="index.php">MCTrade</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
+              <li class="active"><a href="index.php">Home</a></li>
               <li><a href="trades.php">Trades</a></li>
               <li><a href="help.php">Help</a></li>
             </ul>
