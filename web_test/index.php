@@ -120,12 +120,6 @@ if($tradeStatus == 2) {echo "<img src='img/cancel-icon.png' alt='Open' title='Op
 
 <?php include_once 'assets/php/footer.php'; ?>
 </body>
-<script>
-$(document).ready(function() {
-    $('#example').dataTable( {
-        "sDom": "<'row'<'span8'l><'span8'f>r>t<'row'<'span8'i><'span8'p>>"
-    } );
-} );
-</script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 </html>
 
