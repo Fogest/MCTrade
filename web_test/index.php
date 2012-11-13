@@ -120,6 +120,6 @@ if($tradeStatus == 2) {echo "<img src='img/cancel-icon.png' alt='Open' title='Op
 
 <?php include_once 'assets/php/footer.php'; ?>
 </body>
-<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js" type="text/javascript"></script>
 </html>
 
