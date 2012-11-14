@@ -5,6 +5,7 @@ include 'assets/php/functions.php';
 <html lang="en"> 
 <head>
 <?php include_once 'assets/php/header.php'; ?>
+	<link href="css/data_table.css" rel="stylesheet">
 </head>
 <body>
 
@@ -18,7 +19,6 @@ include_once 'assets/php/body-head.php'?>
 										 CONTENT
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <div class="container">
-      <div class="hero-unit">
         <h1>Trading</h1>
 		<?php 
 $username = getUsername();
@@ -66,7 +66,7 @@ if($tradeStatus == 2) {echo "<img src='img/cancel-icon.png' alt='Open' title='Op
 } else { 
 
 ?>
-<table class="table" id="trades">
+<table class="table table-hover table-bordered table-striped" id="trades">
 	<thead>
 		<tr>
 			<th class="first-th">Trade ID</th>
@@ -97,7 +97,7 @@ if($tradeStatus == 2) {echo "<img src='img/cancel-icon.png' alt='Open' title='Op
 	
 	if($tradeStatus!=3) {
 		echo "<tr>";
-		echo "<td class='first-td'><a href='index.php?id=$tradeID'>$tradeID</a></td>";
+		echo "<td class='first-td'>$tradeID</td>";
 		echo "<td>$mcUsername</td>";
 		echo "<td>$blockName</td>";
 		echo "<td>$quantity</td>";
@@ -114,17 +114,11 @@ if($tradeStatus == 2) {echo "<img src='img/cancel-icon.png' alt='Open' title='Op
 
 
 <?php } ?>
-      </div>
     </div> <!-- /container -->
 
 
 <?php include_once 'assets/php/footer.php'; ?>
 </body>
-<script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js" type="text/javascript"></script>
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#trades').dataTable();
-} );
-</script>
+
 </html>
 
