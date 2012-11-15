@@ -144,12 +144,12 @@ public class DatabaseManager {
 		}
 		try {
 			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_users VALUES (NULL,?,?,'1',?)");
-			ps.setString(1, password);
+			ps.setString(1, hashtext);
 			ps.setString(2, player);
 			ps.setString(3, ip);
 			ps.executeUpdate();
 			ps.close();
-			ps = db.getConnection().prepareStatement("SELECT MAX(id) FROM mctrade_trades");
+			ps = db.getConnection().prepareStatement("SELECT MAX(user_id) FROM mctrade_trades");
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				userId = rs.getInt("MAX(user_id)");
@@ -174,7 +174,7 @@ public class DatabaseManager {
 			ps.setInt(4, amount);
 			ps.setString(5, cost);
 			ps.setString(6, "Trade Created using MCTrade Plugin");
-			ps.setString(8, Ip);
+			ps.setString(7, Ip);
 			ps.executeUpdate();
 			ps.close();
 			ps = db.getConnection().prepareStatement("SELECT MAX(id) FROM mctrade_trades");

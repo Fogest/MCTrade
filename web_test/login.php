@@ -46,23 +46,17 @@ include_once 'assets/php/body-head.php'?>
 					}
 					
 					if($loginok == true) {
-						$active = $row['active'];
-						$email = $row['email'];
-						if($active == 0) {
-							echo "You haven't activated your account, please check your email ($email), if not in your inbox, check your junk folder.";
+					$email = $row['email'];
+						if($remPass=="on")
+						{
+							setcookie("username",$username);
 						}
-						else {
-							if($remPass=="on")
-							{
-								setcookie("username",$username);
-							}
-							else if($remPass=="")
-							{
-								$_SESSION['username'] = $username;
-							}
-							header("Location: member.php");
-							exit();
+						else if($remPass=="")
+						{
+							$_SESSION['username'] = $username;
 						}
+						header("Location: member.php");
+						exit();
 					}
 					else die("Incorrect username/password combination.");
 				}

@@ -81,13 +81,16 @@ public class PlayerCommands implements CommandExecutor {
 			}
 			// Creating Online Account
 			else if (args[0].equalsIgnoreCase("create") && checkPerms(player, "create")) {
-				if(args.length <= 1) {
+				int userId = DatabaseManager.getUserId(player.getName());
+				if (args.length == 2 && userId < 1) {
+					String playerIP = player.getAddress().getAddress().getHostAddress();
+					DatabaseManager.createUser(args[1], player.getName(), playerIP);
+				} else if(userId > 0) {
+					m.tellPlayer(player, "You've already created an account!");
+				} else {
 					m.tellPlayer(player, Msg.CREATE_USAGE);
 				}
-				
-				String playerIP = player.getAddress().getAddress().getHostAddress();
-				DatabaseManager.createUser(args[1], player.getName(), playerIP);
-			} 
+			}
 			// Accepting Trade
 			else if (args[0].equalsIgnoreCase("accept") && checkPerms(player, "accept")) {
 				if(userId > 0) {

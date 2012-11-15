@@ -88,6 +88,7 @@ public class MCTrade extends JavaPlugin {
 		} catch (IOException e) {
 		    // Failed to submit the stats :-(
 		}
+		saveToDatabase();
 	}
 	public void onReload() {
 		reloadSettings();
@@ -125,11 +126,9 @@ public class MCTrade extends JavaPlugin {
 	}
 	public void saveToDatabase() {
 		for(int i = 0;i < moderaters.size();i++) {
-			msg.info(moderaters.get(i));
 			DatabaseManager.setUserLevelForMod(moderaters.get(i));
 		}
 		for(int i = 0;i < admins.size();i++) {
-			msg.info(admins.get(i));
 			DatabaseManager.setUserLevelForAdmin(admins.get(i));
 		}
 	}
