@@ -1,8 +1,10 @@
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>
-<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>MCTrade</title>
 <meta name="description" content="Makes trading a tad bit easier!" />
 <meta name="author" content="Fogest, Fog Productions" />
+  <meta charset="UTF-8" />
+  <meta name="google" value="notranslate">
+  <meta http-equiv="Content-Language" content="en" />
 
     <link href="css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
@@ -10,6 +12,12 @@
         padding-top: 60px;
         padding-bottom: 40px;
       }
+	  .footer {
+		text-align: center 
+	  }
+	  .header-right {
+		font-size:150%;
+	  }
     </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
 
