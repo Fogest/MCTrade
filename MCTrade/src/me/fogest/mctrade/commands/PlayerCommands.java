@@ -32,8 +32,6 @@ import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.MessageHandler;
 import me.fogest.mctrade.Msg;
-import me.fogest.mctrade.UrlShortener;
-import me.fogest.mctrade.Verify;
 import me.fogest.mctrade.AcceptTrade;
 
 public class PlayerCommands implements CommandExecutor {
@@ -72,54 +70,31 @@ public class PlayerCommands implements CommandExecutor {
 			// Attempt trade creation command if second var is number
 			if (args[0].matches("[0-9]+") && checkPerms(player,"trade")) {
 				prepareTrade(player);
-				int active = DatabaseManager.getActiveLevel(player.getName());
-				if (userId > 0 && active == 2) {
+				if (userId > 0) {
 					CreateTrade(player, args);
-				}
-				else if(active != 2){
-					m.tellPlayer(player, Msg.NOT_ACTIVE);
 				}
 				else if (userId < 1) {
 					m.tellPlayer(player, Msg.ACCOUNT_REQUIRED);
-					m.tellPlayer(player, UrlShortener.shortenURL(longLink));
 				} else {
 					m.tellPlayer(player, Msg.USERID_GET_ERROR);
 				}
 			}
-			// Verifying Online Account
-			else if (args[0].equalsIgnoreCase("verify") && checkPerms(player, "verify")) {
-				userId = getUserId(player);
-				int active = DatabaseManager.getActiveLevel(player.getName());
-				if(active < 2 && userId > 0) {
-					ver = Verify.createUserVerification(player.getName());
-					m.tellPlayer(player, "Your verification code is: " + ver);
-					m.tellPlayer(player, "Enter this code on the site");
-					m.tellPlayer(player,"" + webURL);
+			// Creating Online Account
+			else if (args[0].equalsIgnoreCase("create") && checkPerms(player, "create")) {
+				if(args.length <= 1) {
+					m.tellPlayer(player, Msg.CREATE_USAGE);
 				}
-				else if(active == 2) {
-					m.tellPlayer(player, Msg.ALREADY_VERIFIED);
-				}
-				else if(userId < 1){
-					m.tellPlayer(player, Msg.ACCOUNT_REQUIRED);
-					m.tellPlayer(player, UrlShortener.shortenURL(longLink));
-				}
-				else {
-					m.tellPlayer(player, Msg.GENERAL_ERROR);
-				}
+				
+				String playerIP = player.getAddress().getAddress().getHostAddress();
+				DatabaseManager.createUser(args[1], player.getName(), playerIP);
 			} 
 			// Accepting Trade
 			else if (args[0].equalsIgnoreCase("accept") && checkPerms(player, "accept")) {
-				userId = getUserId(player);
-				int active = DatabaseManager.getActiveLevel(player.getName());
-				if(active == 2 && userId > 0) {
+				if(userId > 0) {
 					AcceptTrade(player, args);
-				}
-				else if(active != 2){
-					m.tellPlayer(player, Msg.NOT_ACTIVE);
 				}
 				else if(userId < 1){
 					m.tellPlayer(player, Msg.ACCOUNT_REQUIRED);
-					m.tellPlayer(player, UrlShortener.shortenURL(longLink));
 				}
 				else {
 					m.tellPlayer(player, Msg.GENERAL_ERROR);

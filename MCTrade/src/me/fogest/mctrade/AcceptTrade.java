@@ -43,7 +43,6 @@ public class AcceptTrade {
 		itemAmount = DatabaseManager.getTradeAmount(getTradeId());
 		itemCost = DatabaseManager.getItemCost(getTradeId());
 		DatabaseManager.acceptTrade(getTradeId());
-		DatabaseManager.addRepOnTradeAccept(getUsername(getTradeId()),DatabaseManager.getUserLevel(getUsername(getTradeId())));
 		getItemName();
 		world = player.getWorld();
 		ItemStack item = new ItemStack(getTradeItem(),itemAmount);

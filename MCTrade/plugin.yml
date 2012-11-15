@@ -18,7 +18,7 @@ permissions:
     children:
       mctrade.mctrade : true
       mctrade.trade : true
-      mctrade.verify : true
+      mctrade.create : true
       mctrade.accept : true
     default: op
   mctrade.mctrade:
@@ -29,8 +29,8 @@ permissions:
   mctrade.trade:
     description: Allows user to use /mct (num 1-9) to create a trade!
     default: true
-  mctrade.verify:
-    description: Allows users to use /mct verify to verify their website account!
+  mctrade.create:
+    description: Allows users to use /mct create to create a MCTrade account.
     default: true
   mctrade.accept:
     description: Allows users to use /mct accept to accept a trade.
