@@ -30,7 +30,8 @@ public class MySQL extends Database {
 				 String portnmbr,
 				 String database,
 				 String username,
-				 String password) {
+				 String password) 
+	{
 		super(log,prefix,"[MySQL] ");
 		this.hostname = hostname;
 		this.portnmbr = portnmbr;

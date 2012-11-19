@@ -34,7 +34,8 @@ public class DatabaseManager {
 	private static MCTrade plugin = MCTrade.getPlugin();
 	public static File dbFolder = new File("plugins/MCTrade");
 
-	public static me.fogest.mctrade.SQLibrary.MySQL db = new me.fogest.mctrade.SQLibrary.MySQL(MCTrade.getPlugin().getLogger(), "[MCTrade]", "localhost", "3306", "mctrade", "root", "");
+	public static me.fogest.mctrade.SQLibrary.MySQL db = new me.fogest.mctrade.SQLibrary.MySQL(MCTrade.getPlugin().getLogger(), "[MCTrade]", MCTrade.mysqlHostname, MCTrade.mysqlPort,
+			MCTrade.mysqlDatabase, MCTrade.mysqlUsername, MCTrade.mysqlPassword);
 
 	/**
 	 * Initializes, opens and confirms the tables and database.
@@ -69,9 +70,10 @@ public class DatabaseManager {
 			}
 		}
 		if (!db.checkTable("MCTrade_trades")) {
-			String queryString = "CREATE TABLE IF NOT EXISTS `MCTrade_trades` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`Minecraft_Username` text NOT NULL,"
-					+ "`Block_ID` int(5) NOT NULL," + "`Block_Name` text COLLATE latin1_general_ci NOT NULL," + "`Quantity` int(3) NOT NULL," + "`Cost` text NOT NULL," + "`TradeNotes` text NOT NULL,"
-					+ "`IP` text NOT NULL," + "`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade'," + "PRIMARY KEY (`id`))";
+			String queryString = "CREATE TABLE IF NOT EXISTS `mctrade_trades` ( " + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`Minecraft_Username` text NOT NULL,"
+					+ "`Block_ID` int(5) NOT NULL," + "`Block_Name` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL," + "`Durability` int(11) NOT NULL," + "`Quantity` int(3) NOT NULL,"
+					+ "`Cost` text NOT NULL," + "`TradeNotes` text NOT NULL," + "`IP` text NOT NULL," + "`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade',"
+					+ "PRIMARY KEY (`id`)" + ")";
 			try {
 				db.query(queryString);
 				MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the trades table.");
@@ -163,18 +165,19 @@ public class DatabaseManager {
 		return userId;
 	}
 
-	public static int createTrade(String player, int blockId, String block, int amount, String cost, String Ip) {
+	public static int createTrade(String player, int blockId, String block, int durability, int amount, String cost, String Ip) {
 		String username = getUsername(player);
 		int id = 0;
 		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,'1')");
+			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,?,'1')");
 			ps.setString(1, player);
 			ps.setInt(2, blockId);
 			ps.setString(3, block);
 			ps.setInt(4, amount);
-			ps.setString(5, cost);
-			ps.setString(6, "Trade Created using MCTrade Plugin");
-			ps.setString(7, Ip);
+			ps.setInt(5, durability);
+			ps.setString(6, cost);
+			ps.setString(7, "Trade Created using MCTrade Plugin");
+			ps.setString(8, Ip);
 			ps.executeUpdate();
 			ps.close();
 			ps = db.getConnection().prepareStatement("SELECT MAX(id) FROM mctrade_trades");

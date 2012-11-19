@@ -1,5 +1,5 @@
 /*
-99 * MCTrade
+ * MCTrade
  * Copyright (C) 2012 Fogest <http://fogest.net16.net> and contributors
  *
  * This program is free software: you can redistribute it and/or modify

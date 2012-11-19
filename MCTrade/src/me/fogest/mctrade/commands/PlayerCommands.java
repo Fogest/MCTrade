@@ -20,6 +20,8 @@ package me.fogest.mctrade.commands;
 
 import java.util.Arrays;
 
+import net.minecraft.server.Item;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -37,6 +39,7 @@ import me.fogest.mctrade.AcceptTrade;
 public class PlayerCommands implements CommandExecutor {
 	private int itemId;
 	private int itemAmount;
+	private int itemDurability;
 	private Material itemMaterial;
 	private MessageHandler m;
 
@@ -166,9 +169,9 @@ public class PlayerCommands implements CommandExecutor {
 			taxAmount = (price * tax);
 			double balance = (MCTrade.econ.getBalance(player.getName()));
 			if (trade == true && balance >= taxAmount) {
-				removeItem(player, getItemMaterial(), getItemAmount());
+				removeItem(player, player.getItemInHand());
 				MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-				int tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
+				int tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(),getItemDurability(player), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
 				m.tellAll(player.getName() + " has created a new trade (" + tId + ")");
 				m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY + price);
 				m.tellPlayer(player, "You have been charged " + taxAmount + " for the creation of this trade!");
@@ -217,7 +220,9 @@ public class PlayerCommands implements CommandExecutor {
 		return amount;
 	}
 
-	public void removeItem(Player player, Material type, int amount) {
+	public void removeItem(Player player, ItemStack playerStack) {
+		int amount = playerStack.getAmount();
+		Material type = playerStack.getType();
 		ItemStack[] contents = player.getInventory().getContents();
 		int counter = 0;
 		for (ItemStack stack : Arrays.asList(contents)) {
@@ -279,6 +284,17 @@ public class PlayerCommands implements CommandExecutor {
 
 	public int getItemAmount() {
 		return itemAmount;
+	}
+	public int getItemDurability(Player p) {
+		ItemStack i = p.getItemInHand();
+		double itemDur;
+		itemDur = i.getDurability();
+		double max = getItemMaterial().getMaxDurability();
+		itemDur = ((itemDur / max)*100);
+		
+		itemDurability = (int) Math.round(itemDur);
+		m.tellAll("" + itemDurability);
+		return itemDurability;
 	}
 
 	public void setItemAmount(int itemAmount) {
