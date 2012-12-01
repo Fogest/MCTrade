@@ -301,6 +301,9 @@ public class PlayerCommands implements CommandExecutor {
 		double itemDur = i.getDurability();
 		Material inHand = i.getType();
 		double max = inHand.getMaxDurability();
+		if(max == 0) {
+			return 101;
+		}
 		itemDur = max - itemDur;
 		itemDur = ((itemDur / max)*100);
 		itemDurability = (int)Math.round(itemDur);

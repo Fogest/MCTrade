@@ -348,6 +348,24 @@ public class DatabaseManager {
 		}
 		return tradeCost;
 	}
+	public static int getItemDur(int id) {
+		int tradeCost = 0;
+		if (!db.checkConnection())
+			return 0;
+		try {
+			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Durability` FROM `mctrade_trades` WHERE `id` = ?");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				tradeCost = rs.getInt("Durability");
+			}
+			ps.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return tradeCost;
+	}
 
 	public static int getTradeAmount(int id) {
 		int tradeAmount = 0;
