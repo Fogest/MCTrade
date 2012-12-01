@@ -78,7 +78,6 @@ public class MCTrade extends JavaPlugin {
 		econ = getProvider(Economy.class);
 		perms = getProvider(Permission.class);
 		chat = getProvider(Chat.class);
-		
 		if(update == true)
 			updater = new Updater(this, "mctrade", this.getFile(), Updater.UpdateType.DEFAULT, true);
 		
@@ -109,6 +108,7 @@ public class MCTrade extends JavaPlugin {
 		mysqlUsername = getConfig().getString("mysql.username");
 		mysqlPassword = getConfig().getString("mysql.password");
 		mysqlDatabase = getConfig().getString("mysql.database");
+		if(getConfig().isSet("two.one") == true) {}
 		
         List<String> modsList = getConfig().getStringList("Web.Access.Moderator");
         for (String s : modsList){

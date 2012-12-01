@@ -168,10 +168,19 @@ public class PlayerCommands implements CommandExecutor {
 			int price = Integer.parseInt(args[0]);
 			taxAmount = (price * tax);
 			double balance = (MCTrade.econ.getBalance(player.getName()));
+			int tId = 0;
 			if (trade == true && balance >= taxAmount) {
-				removeItem(player, player.getItemInHand());
-				MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-				int tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(),getItemDurability(player), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
+				if(args.length >= 2) {
+					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
+					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), getItemDurability(player), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
+				removeItem(player, player.getItemInHand(), Integer.parseInt(args[1]));
+				
+				} else if(args.length < 2) {
+					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
+					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), getItemDurability(player), getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
+					removeItem(player, player.getItemInHand());
+				}
+				
 				m.tellAll(player.getName() + " has created a new trade (" + tId + ")");
 				m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY + price);
 				m.tellPlayer(player, "You have been charged " + taxAmount + " for the creation of this trade!");
@@ -219,17 +228,19 @@ public class PlayerCommands implements CommandExecutor {
 		}
 		return amount;
 	}
-
 	public void removeItem(Player player, ItemStack playerStack) {
-		int amount = playerStack.getAmount();
-		Material type = playerStack.getType();
+		player.getInventory().removeItem(playerStack);
+	}
+
+	public void removeItem(Player player, ItemStack playerStack, int amount) {
+		int typeId = playerStack.getTypeId();
 		ItemStack[] contents = player.getInventory().getContents();
 		int counter = 0;
 		for (ItemStack stack : Arrays.asList(contents)) {
 			if (stack == null) {
 				continue;
 			}
-			if (!(stack.getType().equals(type))) {
+			if (stack.getTypeId() != typeId) {
 				continue;
 			}
 			if (stack.getAmount() < amount) {
@@ -287,13 +298,12 @@ public class PlayerCommands implements CommandExecutor {
 	}
 	public int getItemDurability(Player p) {
 		ItemStack i = p.getItemInHand();
-		double itemDur;
-		itemDur = i.getDurability();
-		double max = getItemMaterial().getMaxDurability();
+		double itemDur = i.getDurability();
+		Material inHand = i.getType();
+		double max = inHand.getMaxDurability();
+		itemDur = max - itemDur;
 		itemDur = ((itemDur / max)*100);
-		
-		itemDurability = (int) Math.round(itemDur);
-		m.tellAll("" + itemDurability);
+		itemDurability = (int)Math.round(itemDur);
 		return itemDurability;
 	}
 

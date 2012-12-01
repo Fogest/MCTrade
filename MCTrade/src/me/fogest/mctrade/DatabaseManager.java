@@ -173,8 +173,8 @@ public class DatabaseManager {
 			ps.setString(1, player);
 			ps.setInt(2, blockId);
 			ps.setString(3, block);
-			ps.setInt(4, amount);
-			ps.setInt(5, durability);
+			ps.setInt(4, durability);
+			ps.setInt(5, amount);
 			ps.setString(6, cost);
 			ps.setString(7, "Trade Created using MCTrade Plugin");
 			ps.setString(8, Ip);
