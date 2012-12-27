@@ -19,12 +19,17 @@
 package me.fogest.mctrade.commands;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -128,6 +133,7 @@ public class PlayerCommands implements CommandExecutor {
 						if (MCTrade.econ.getBalance(player.getName()) >= cost) {
 							AcceptTrade accept = new AcceptTrade(Integer.parseInt(args[1]), player, m);
 							m.tellPlayer(player, "You have sucessfully purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s");
+							m.tellAll(""+ player.getName() + " has purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s. Trade #" + accept.getTradeId() + " Closed.");
 							MCTrade.econ.withdrawPlayer(player.getName(), (cost));
 							MCTrade.econ.depositPlayer(DatabaseManager.getTradeUsername(id), (cost));
 						} else {
@@ -168,14 +174,16 @@ public class PlayerCommands implements CommandExecutor {
 			if (trade == true && balance >= taxAmount) {
 				if (args.length >= 2) {
 					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-					tId = DatabaseManager
-							.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
+					m.tellAll("enchants: "+DatabaseManager.encodeEnchantments(player, player.getItemInHand()));
+					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(),
+							DatabaseManager.encodeEnchantments(player, player.getItemInHand()), args[0], player.getAddress().getAddress().getHostAddress());
 					removeItem(player, player.getItemInHand(), Integer.parseInt(args[1]));
 
 				} else if (args.length < 2) {
 					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-					tId = DatabaseManager
-							.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(), args[0], player.getAddress().getAddress().getHostAddress());
+					m.tellAll("enchants: "+DatabaseManager.encodeEnchantments(player, player.getItemInHand()));
+					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(),
+							DatabaseManager.encodeEnchantments(player, player.getItemInHand()), args[0], player.getAddress().getAddress().getHostAddress());
 					removeItem(player, player.getItemInHand());
 				}
 
@@ -304,17 +312,17 @@ public class PlayerCommands implements CommandExecutor {
 	public int getItemDurability(ItemStack item) {
 		double itemMax = item.getType().getMaxDurability();
 		double itemDur = item.getDurability();
-		if(itemDur != 0) {
-		
-		double percent = (itemDur / itemMax) * 100;
-		m.tellAll("Item max durability is: " + itemMax);
-		m.tellAll("Item current durability is: " + itemDur);
-		m.tellAll("Percent with multiplication is: " + percent);
-		
-		itemDurability = (int) Math.round(percent);
-		m.tellAll("Rounded percent with multiplication is: " + itemDurability);
-		return itemDurability;
-		} else if(itemDur == 0) {
+		if (itemDur != 0) {
+
+			double percent = (itemDur / itemMax) * 100;
+			m.tellAll("Item max durability is: " + itemMax);
+			m.tellAll("Item current durability is: " + itemDur);
+			m.tellAll("Percent with multiplication is: " + percent);
+
+			itemDurability = (int) Math.round(percent);
+			m.tellAll("Rounded percent with multiplication is: " + itemDurability);
+			return itemDurability;
+		} else if (itemDur == 0) {
 			return 100;
 		}
 		return 0;

@@ -25,7 +25,15 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
+
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.SQLibrary.*;
@@ -70,10 +78,10 @@ public class DatabaseManager {
 			}
 		}
 		if (!db.checkTable("MCTrade_trades")) {
-			String queryString = "CREATE TABLE IF NOT EXISTS `mctrade_trades` ( " + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`Minecraft_Username` text NOT NULL,"
+			String queryString = "CREATE TABLE IF NOT EXISTS `mctrade_trades` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`Minecraft_Username` text NOT NULL,"
 					+ "`Block_ID` int(5) NOT NULL," + "`Block_Name` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL," + "`Durability` int(11) NOT NULL," + "`Quantity` int(3) NOT NULL,"
-					+ "`Cost` text NOT NULL," + "`TradeNotes` text NOT NULL," + "`IP` text NOT NULL," + "`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade',"
-					+ "PRIMARY KEY (`id`)" + ")";
+					+ "`Enchantment` text NOT NULL," + "`Cost` text NOT NULL," + "`TradeNotes` text NOT NULL," + "`IP` text NOT NULL,"
+					+ "`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade'," + "PRIMARY KEY (`id`))";
 			try {
 				db.query(queryString);
 				MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the trades table.");
@@ -165,19 +173,20 @@ public class DatabaseManager {
 		return userId;
 	}
 
-	public static int createTrade(String player, int blockId, String block, int durability, int amount, String cost, String Ip) {
+	public static int createTrade(String player, int blockId, String block, int durability, int amount,String enchant, String cost, String Ip) {
 		String username = getUsername(player);
 		int id = 0;
 		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,?,'1')");
+			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,?,?,'1')");
 			ps.setString(1, player);
 			ps.setInt(2, blockId);
 			ps.setString(3, block);
 			ps.setInt(4, durability);
 			ps.setInt(5, amount);
-			ps.setString(6, cost);
-			ps.setString(7, "Trade Created using MCTrade Plugin");
-			ps.setString(8, Ip);
+			ps.setString(6, enchant);
+			ps.setString(7, cost);
+			ps.setString(8, "Trade Created using MCTrade Plugin");
+			ps.setString(9, Ip);
 			ps.executeUpdate();
 			ps.close();
 			ps = db.getConnection().prepareStatement("SELECT MAX(id) FROM mctrade_trades");
@@ -348,6 +357,7 @@ public class DatabaseManager {
 		}
 		return tradeCost;
 	}
+
 	public static int getItemDur(int id) {
 		int tradeCost = 0;
 		if (!db.checkConnection())
@@ -384,6 +394,131 @@ public class DatabaseManager {
 			e.printStackTrace();
 		}
 		return tradeAmount;
+	}
+
+	public static String getEnchantments(int id) {
+		String enchantment = "";
+		if (!db.checkConnection())
+			return "";
+		try {
+			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Enchantment` FROM `mctrade_trades` WHERE `id` = ?");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				enchantment = rs.getString("Enchantment");
+			}
+			ps.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return enchantment;
+	}
+
+	// encode/decode enchantments for database storage
+	public static String encodeEnchantments(Player p, ItemStack stack) {
+		if (stack == null)
+			return "";
+		Map<Enchantment, Integer> enchantments = stack.getEnchantments();
+		if (enchantments == null || enchantments.isEmpty())
+			return "";
+		// get enchantments
+		HashMap<Integer, Integer> enchMap = new HashMap<Integer, Integer>();
+		boolean removedUnsafe = false;
+		for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+			// check safe enchantments
+			int level = checkSafeEnchantments(stack, entry.getKey(), entry.getValue());
+			if (level == 0) {
+				removedUnsafe = true;
+				continue;
+			}
+			enchMap.put(entry.getKey().getId(), level);
+		}
+		if (removedUnsafe && p != null)
+			p.sendMessage("removed_enchants");
+		// sort by enchantment id
+		SortedSet<Integer> enchSorted = new TreeSet<Integer>(enchMap.keySet());
+		// build string
+		String enchStr = "";
+		for (int enchId : enchSorted) {
+			int level = enchMap.get(enchId);
+			if (!enchStr.isEmpty())
+				enchStr += ",";
+			enchStr += Integer.toString(enchId) + ":" + Integer.toString(level);
+		}
+		return enchStr;
+	}
+
+	// decode enchantments from database
+	public static boolean decodeEnchantments(Player p, ItemStack stack, String enchStr) {
+		if (enchStr == null || enchStr.isEmpty())
+			return false;
+		Map<Enchantment, Integer> ench = new HashMap<Enchantment, Integer>();
+		String[] parts = enchStr.split(",");
+		boolean removedUnsafe = false;
+		for (String part : parts) {
+			if (part == null || part.isEmpty())
+				continue;
+			String[] split = part.split(":");
+			if (split.length != 2) {
+				plugin.getLogger().warning("Invalid enchantment data found: " + part);
+				continue;
+			}
+			int enchId = -1;
+			int level = -1;
+			try {
+				enchId = Integer.valueOf(split[0]);
+				level = Integer.valueOf(split[1]);
+			} catch (Exception ignore) {
+			}
+			if (enchId < 0 || level < 1) {
+				plugin.getLogger().warning("Invalid enchantment data found: " + part);
+				continue;
+			}
+			Enchantment enchantment = Enchantment.getById(enchId);
+			if (enchantment == null) {
+				plugin.getLogger().warning("Invalid enchantment id found: " + part);
+				continue;
+			}
+			// check safe enchantments
+			level = checkSafeEnchantments(stack, enchantment, level);
+			if (level == 0) {
+				removedUnsafe = true;
+				continue;
+			}
+			// add enchantment to map
+			ench.put(enchantment, level);
+		}
+		if (removedUnsafe)
+			p.sendMessage("removed_enchants");
+		// add enchantments to stack
+		stack.addEnchantments(ench);
+		return removedUnsafe;
+	}
+
+	// check natural enchantment
+	public static int checkSafeEnchantments(ItemStack stack, Enchantment enchantment, int level) {
+		if (stack == null || enchantment == null)
+			return 0;
+		if (level < 1)
+			return 0;
+		// can enchant item
+		if (!enchantment.canEnchantItem(stack)) {
+			plugin.getLogger().warning("Removed unsafe enchantment: " + stack.toString() + "  " + enchantment.toString());
+			return 0;
+		}
+		// level too low
+		if (level < enchantment.getStartLevel()) {
+			plugin.getLogger()
+					.warning("Raised unsafe enchantment: " + Integer.toString(level) + "  " + stack.toString() + "  " + enchantment.toString() + "  to level: " + enchantment.getStartLevel());
+			level = enchantment.getStartLevel();
+		}
+		// level too high
+		if (level > enchantment.getMaxLevel()) {
+			plugin.getLogger().warning("Lowered unsafe enchantment: " + Integer.toString(level) + "  " + stack.toString() + "  " + enchantment.toString() + "  to level: " + enchantment.getMaxLevel());
+			level = enchantment.getMaxLevel();
+		}
+		return level;
 	}
 
 	public static String getTraderIP(int id) {

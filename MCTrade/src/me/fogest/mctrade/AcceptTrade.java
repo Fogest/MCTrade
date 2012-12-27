@@ -32,6 +32,7 @@ public class AcceptTrade {
 	private int itemAmount = 0;
 	private int itemCost = 0;
 	private double itemDur = 0;
+	private String enchantments = "";
 	private Player player;
 	private ItemStack[] istack;
 	World world;
@@ -44,6 +45,7 @@ public class AcceptTrade {
 		itemAmount = DatabaseManager.getTradeAmount(getTradeId());
 		itemCost = DatabaseManager.getItemCost(getTradeId());
 		itemDur = DatabaseManager.getItemDur(getTradeId());
+		enchantments = DatabaseManager.getEnchantments(getTradeId());
 		DatabaseManager.acceptTrade(getTradeId());
 		getItemName();
 		world = player.getWorld();
@@ -65,6 +67,11 @@ public class AcceptTrade {
 			double itemDurability = (itemDur * is.getType().getMaxDurability());
 			int finalItemDur = (int) Math.round(itemDurability);
 			is.setDurability((short) finalItemDur);
+			
+		//Add Enchants if any
+			if(!enchantments.isEmpty() && enchantments!=null) {
+				DatabaseManager.decodeEnchantments(p, is, enchantments);
+			}
 
 		//Give items	
 			HashMap<Integer, ItemStack> extra = p.getInventory().addItem(is);
