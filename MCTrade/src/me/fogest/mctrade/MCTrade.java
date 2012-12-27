@@ -25,8 +25,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import me.fogest.mctrade.commands.PlayerCommands;
-import me.fogest.mctrade.listeners.Chat;
-
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -37,7 +35,6 @@ public class MCTrade extends JavaPlugin {
 	private MessageHandler msg;
     public static Economy econ = null;
     public static Permission perms = null;
-    public static Chat chat = null;
 
 	public static String mysqlHostname; 
 	public static String mysqlPort;
@@ -68,8 +65,6 @@ public class MCTrade extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		reloadSettings();
-		// Registering the listeners (with the new 1.3 API)
-		getServer().getPluginManager().registerEvents(new Chat(this), this);
 
 		// Registering the command executors
 		getCommand("mctrade").setExecutor(new PlayerCommands(this,msg));
@@ -77,7 +72,6 @@ public class MCTrade extends JavaPlugin {
 		
 		econ = getProvider(Economy.class);
 		perms = getProvider(Permission.class);
-		chat = getProvider(Chat.class);
 		if(update == true)
 			updater = new Updater(this, "mctrade");
 		
