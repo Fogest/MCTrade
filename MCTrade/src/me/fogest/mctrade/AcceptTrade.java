@@ -31,12 +31,14 @@ public class AcceptTrade {
 	private int tradeId;
 	private int itemAmount = 0;
 	private int itemCost = 0;
-	private int itemDur = 101;
+	private double itemDur = 0;
 	private Player player;
 	private ItemStack[] istack;
 	World world;
+	private MessageHandler m;
 
-	public AcceptTrade(int tradeId, Player player) {
+	public AcceptTrade(int tradeId, Player player, MessageHandler m) {
+		this.m = m;
 		this.setTradeId(tradeId);
 		this.setPlayer(player);
 		itemAmount = DatabaseManager.getTradeAmount(getTradeId());
@@ -47,6 +49,7 @@ public class AcceptTrade {
 		world = player.getWorld();
 		ItemStack item = new ItemStack(getTradeItem(), itemAmount);
 		addItemsWithDrops(player, item);
+		
 	}
 
 	public Material getItemName() {
@@ -56,7 +59,14 @@ public class AcceptTrade {
 	}
 
 	public void addItemsWithDrops(Player p, ItemStack is) {
-		if (itemDur == 101) {
+		//Get ItemDurability
+			m.tellAll("Item Dur: " + itemDur); 
+			itemDur = (itemDur / 100);
+			double itemDurability = (itemDur * is.getType().getMaxDurability());
+			int finalItemDur = (int) Math.round(itemDurability);
+			is.setDurability((short) finalItemDur);
+
+		//Give items	
 			HashMap<Integer, ItemStack> extra = p.getInventory().addItem(is);
 			Iterator<Entry<Integer, ItemStack>> it = extra.entrySet().iterator();
 			while (it.hasNext()) {
@@ -64,9 +74,6 @@ public class AcceptTrade {
 				world.dropItemNaturally(p.getLocation(), (ItemStack) pairs.getValue());
 				it.remove();
 			}
-		} else {
-
-		}
 	}
 
 	public String getUsername(int id) {
