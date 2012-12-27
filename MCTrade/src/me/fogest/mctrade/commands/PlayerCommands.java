@@ -283,10 +283,6 @@ public class PlayerCommands implements CommandExecutor {
 		userId = DatabaseManager.getUserId(player.getName());
 	}
 
-	private int getUserId(Player player) {
-		return DatabaseManager.getUserId(player.getName());
-	}
-
 	public int getItemId() {
 		return itemId;
 	}

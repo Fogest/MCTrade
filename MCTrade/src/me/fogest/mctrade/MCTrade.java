@@ -79,7 +79,7 @@ public class MCTrade extends JavaPlugin {
 		perms = getProvider(Permission.class);
 		chat = getProvider(Chat.class);
 		if(update == true)
-			updater = new Updater(this, "mctrade", this.getFile(), Updater.UpdateType.DEFAULT, true);
+			updater = new Updater(this, "mctrade");
 		
 		try {
 		    Metrics metrics = new Metrics(this);
@@ -118,7 +118,7 @@ public class MCTrade extends JavaPlugin {
         for (String s : adminList){
         	admins.add(s);
         }
-        update = getConfig().getBoolean("TradeOptions.AutoUpdate");
+        update = getConfig().getBoolean("TradeOptions.VersionNotifications");
         tax = getConfig().getDouble("TradeOptions.Tax");
         webAddress = getConfig().getString("Web.MctradeDirectory");
         checkIP = getConfig().getBoolean("TradeOptions.CheckTradeIP");
