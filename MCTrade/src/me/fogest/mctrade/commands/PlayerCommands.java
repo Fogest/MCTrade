@@ -133,7 +133,7 @@ public class PlayerCommands implements CommandExecutor {
 						if (MCTrade.econ.getBalance(player.getName()) >= cost) {
 							AcceptTrade accept = new AcceptTrade(Integer.parseInt(args[1]), player, m);
 							m.tellPlayer(player, "You have sucessfully purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s");
-							m.tellAll(""+ player.getName() + " has purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s. Trade #" + accept.getTradeId() + " Closed.");
+							m.tellAll(""+ player.getName() + " has purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s [" + accept.getTradeId() + "]");
 							MCTrade.econ.withdrawPlayer(player.getName(), (cost));
 							MCTrade.econ.depositPlayer(DatabaseManager.getTradeUsername(id), (cost));
 						} else {
@@ -174,14 +174,12 @@ public class PlayerCommands implements CommandExecutor {
 			if (trade == true && balance >= taxAmount) {
 				if (args.length >= 2) {
 					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-					m.tellAll("enchants: "+DatabaseManager.encodeEnchantments(player, player.getItemInHand()));
 					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(),
 							DatabaseManager.encodeEnchantments(player, player.getItemInHand()), args[0], player.getAddress().getAddress().getHostAddress());
 					removeItem(player, player.getItemInHand(), Integer.parseInt(args[1]));
 
 				} else if (args.length < 2) {
 					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-					m.tellAll("enchants: "+DatabaseManager.encodeEnchantments(player, player.getItemInHand()));
 					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(),
 							DatabaseManager.encodeEnchantments(player, player.getItemInHand()), args[0], player.getAddress().getAddress().getHostAddress());
 					removeItem(player, player.getItemInHand());

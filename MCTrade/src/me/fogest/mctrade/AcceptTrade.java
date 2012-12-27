@@ -62,11 +62,18 @@ public class AcceptTrade {
 
 	public void addItemsWithDrops(Player p, ItemStack is) {
 		//Get ItemDurability
+			double itemDurability;
+			int finalItemDur = 0;
 			m.tellAll("Item Dur: " + itemDur); 
+			if(itemDur != 100) { 
+				itemDurability = is.getType().getMaxDurability();
+				finalItemDur = (int) Math.round(itemDurability);
+
 			itemDur = (itemDur / 100);
-			double itemDurability = (itemDur * is.getType().getMaxDurability());
-			int finalItemDur = (int) Math.round(itemDurability);
+			itemDurability = (itemDur * is.getType().getMaxDurability());
+			finalItemDur = (int) Math.round(itemDurability);
 			is.setDurability((short) finalItemDur);
+			}
 			
 		//Add Enchants if any
 			if(!enchantments.isEmpty() && enchantments!=null) {
