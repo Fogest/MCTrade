@@ -9,8 +9,10 @@ $data = array();
 while ( $row = mysql_fetch_assoc($result) )
 {
     $data[] = $row;
+	$output['aaData'][] = $row;
 }
+//$output['aaData'][] = $row;
 header("Content-type: application/json");
-echo json_encode( $data );    
+echo json_encode( $output );    
 
 ?>

@@ -15,11 +15,8 @@
 			<?php
 			if(loggedin()) {
 				$usernameForm = getUsername();
-				echo "<a class='header-right' href='member.php'>$usernameForm</a>";
+				echo "<span class='header-right'>$usernameForm</span>";
 				$userLevelForm = getUserlevel();
-				if($userLevelForm == "4") {
-					echo " <a class='header-right' href='admincp.php'>(Admin CP)</a>";
-				}
 				echo " <a class='header-right' href='logout.php'>(Logout)</a>";
 			} else {
 			?>

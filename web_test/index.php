@@ -28,10 +28,6 @@ $row = mysql_fetch_assoc($query);
 
 $userLevel = $row['user_level'];
 
-if($userLevel == 104) {
-	echo "<a href='admincp.php?location=edit-trades'>Edit Trades</a>";
-}
-
 $id = $_GET['id'];
 if($id){
 
@@ -77,38 +73,7 @@ if($id){
 	<th class="last-th center-th">Trade Status(opened/closed)</th>
 	</tr>
 	</thead>
-	
 	<tbody>
-	<?php 
-	$res = mysql_query("SELECT MAX(id) FROM mctrade_trades");
-	$row = mysql_fetch_row($res);
-	$cur = $row[0];
-	while($cur > 0) {
-		$query = mysql_query("SELECT * FROM mctrade_trades WHERE id='$cur'");
-
-		$row = mysql_fetch_assoc($query);
-		
-		$tradeID = $row['id'];
-		$mcUsername = $row['Minecraft_Username'];
-		$blockName = $row['Block_Name'];
-		$quantity = $row['Quantity'];
-		$Cost = $row['Cost'];
-		$tradeStatus = $row['Trade_Status'];
-		
-		if($tradeStatus!=3) {
-			echo "<tr>";
-			echo "<td class='first-td'>$tradeID</td>";
-			echo "<td>$mcUsername</td>";
-			echo "<td>$blockName</td>";
-			echo "<td>$quantity</td>";
-			echo "<td>$Cost</td>";
-			if($tradeStatus == 1) { echo "<td class='last-td center-td'><img src='img/accept-icon.png' alt='Open' title='Open' width='16px' height='16px'/></td>"; }
-			if($tradeStatus == 2) { echo "<td class='last-td center-td'><img src='img/cancel-icon.png' alt='Closed' title='Closed' width='16px' height='16px' /></td>"; }
-			echo "</tr>";
-		}
-		$cur = $cur - 1;
-	} 
-	?>
 	</tbody>
 	</table>
 

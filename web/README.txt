@@ -1,4 +1,4 @@
-Note: Probably best to delete this file when your done reading it. It's not essential to delete it though, but it's really not needed after... hopefully.
+Note: Probably best to delete this file when your done reading it
 
 Step 1:
 Enter the folder labled php. Once in this folder open up the file named config.php
