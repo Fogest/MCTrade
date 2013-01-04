@@ -22,10 +22,10 @@ permissions:
       mctrade.accept : true
     default: op
   mctrade.mctrade:
-    description: Basic command used to see /mctrade usage info
+    description: Basic command usage.
     default: true
   mctrade.help:
-    description: Allows user to use /mct help to list commands and functions of those commands!
+    description: List of commands avalible for MCTrade
   mctrade.trade:
     description: Allows user to use /mct (num 1-9) to create a trade!
     default: true
@@ -35,3 +35,9 @@ permissions:
   mctrade.accept:
     description: Allows users to use /mct accept to accept a trade.
     default: true
+  mctrade.mod:
+    description: Gives a user access to future commands and some access to extra features on the website.
+    default: false
+  mctrade.admin:
+    description: Gives a user full control over all admin/mod based commands and admin/mod controls on the website.
+    default: op
