@@ -15,9 +15,8 @@ $bodySubTitle = "Your home!";
 $bodyLocation = "Home";
 $bodyTab = "home";
 include_once 'assets/php/body-head.php'?>
-<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-CONTENT
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<!-- Content -->
 <div class="container">
 <h1>Trading</h1>
 <?php 

@@ -1,5 +1,5 @@
 <?php
-include 'CONFIG.php';
+include '../../CONFIG.php';
     /*
      * Script:    DataTables server-side script for PHP and MySQL
      * Copyright: 2010 - Allan Jardine, 2012 - Chris Wright
@@ -139,6 +139,7 @@ include 'CONFIG.php';
         SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $aColumns))."
         FROM   $sTable
         $sWhere
+		WHERE Trade_Status='1'
         $sOrder
         $sLimit
     ";
@@ -156,11 +157,11 @@ include 'CONFIG.php';
     $sQuery = "
         SELECT COUNT(".$sIndexColumn.")
         FROM   $sTable
+		WHERE Trade_Status='1'
     ";
     $rResultTotal = mysql_query( $sQuery, $gaSql['link'] ) or fatal_error( 'MySQL Error: ' . mysql_errno() );
     $aResultTotal = mysql_fetch_array($rResultTotal);
     $iTotal = $aResultTotal[0];
-     
      
     /*
      * Output

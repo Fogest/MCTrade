@@ -153,6 +153,6 @@ $(document).ready(function() {
 		"bProcessing": true,
         "bServerSide": true,
 		"sAjaxDataProp": "aaData",
-        "sAjaxSource": "test.php"
+        "sAjaxSource": "assets/tables/user_trades_table.php"
 	} );
 } );
