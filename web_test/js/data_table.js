@@ -152,14 +152,7 @@ $(document).ready(function() {
 		"sPaginationType": "bootstrap",
 		"bProcessing": true,
         "bServerSide": true,
-		"aoColumns": [
-			{ "mData": "id" },
-			{ "mData": "Minecraft_Username" },
-			{ "mData": "Block_Name" },
-			{ "mData": "Quantity" },
-			{ "mData": "Cost" },
-			{ "mData": "Trade_Status" },
-		  ],
+		"sAjaxDataProp": "aaData",
         "sAjaxSource": "test.php"
 	} );
 } );

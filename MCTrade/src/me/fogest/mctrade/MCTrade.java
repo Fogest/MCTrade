@@ -96,7 +96,7 @@ public class MCTrade extends JavaPlugin {
 	public void reloadSettings() {
 		reloadConfig();
 		getConfig().options().copyDefaults(true);
-		saveConfig();
+		saveDefaultConfig();
 		mysqlHostname = getConfig().getString("mysql.hostname");
 		mysqlPort = getConfig().getString("mysql.port");
 		mysqlUsername = getConfig().getString("mysql.username");
