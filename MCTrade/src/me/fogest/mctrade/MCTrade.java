@@ -125,6 +125,7 @@ public class MCTrade extends JavaPlugin {
 		for(int i = 0;i < admins.size();i++) {
 			DatabaseManager.setUserLevelForAdmin(admins.get(i));
 		}
+
 	}
 	public void onDisable() {
 		DatabaseManager.disableDB();

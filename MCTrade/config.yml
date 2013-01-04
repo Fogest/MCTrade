@@ -10,22 +10,24 @@ mysql:
   password: 123
   #database: is the name of the database
   database: Minecraft
+#Web related settings!
 Web:
-  #MctradeDirectory: is basically the link that would take you directly to the MCTrade webpage. PLEASE leave it formatted as is. That means do not put anything like index.html on the end, simply leave it like it is and make sure to include the trailing slash as shown below
-  MctradeDirectory: http://websitename.com/mctrade/
-  #Controls who has what level of access on the webpage. As of now it does not do much to have higher access except that you are basically excempt from gaining rep on the trading system.
+  #Web access level controls!
   Access:
-    #As of now someone given moderator status gets no extra's. This will be used in the future when the admin control panel on the website is finished.
+    # Grant a user access to moderator featurss on the website. This only affects website permissions, NOT in game permissions! To give a user mod permissions in game use permission: mctrade.mod
     Moderator:
-      - SomeModsNameHere
-    #This allows the admin to close his own trades, and get access to the admin control panel (which has nothing yet). 
+    #  - SomeModsNameHere
+    #  - AnotherModExample
+    # Gives a user access to admin features on the website, not in game! To give admin permissions in game use the permission: mctrade.admin
     Admin:
-      - SomeAdminsNameHere
+    #  - SomeAdminsNameHere
+    #  - AnotherAdminExample
 #General trade options
 TradeOptions:
   #If true, you will be notified in the console if a new version of MCTrade is released.
   VersionNotifications: true
   #This is the amount of tax a user is charged when they create a trade. Please make sure to include at least 2 decimal places as seen below. The tax works by simply multiplying the price the user is selling the item for by the tax and then charging the user that result. 0.02 is a 2% tax charged. If you want no tax just make it 0.00
   Tax: 0.02
+  #Should MCTrade check users IP's when making a trade. WARNING: Enabling this may prevent users from the same house from being able to accept other members trades from the same house!
   CheckTradeIP: false
   
