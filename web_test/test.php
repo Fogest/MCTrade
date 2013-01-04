@@ -175,20 +175,22 @@ include 'CONFIG.php';
     while ( $aRow = mysql_fetch_array( $rResult ) )
     {
         $row = array();
-        for ( $i=0 ; $i<count($aColumns) ; $i++ )
-        {
-            if ( $aColumns[$i] == "version" )
-            {
-                /* Special output formatting for 'version' column */
-                $row[] = ($aRow[ $aColumns[$i] ]=="0") ? '-' : $aRow[ $aColumns[$i] ];
-            }
-            else if ( $aColumns[$i] != ' ' )
-            {
-                /* General output */
-                $row[] = $aRow[ $aColumns[$i] ];
-            }
-        }
-        $output['aaData'][] = $row;
+		if($aRow['Trade_Status'] == '1') {
+			for ( $i=0 ; $i<count($aColumns) ; $i++ )
+			{
+				if ( $aColumns[$i] == "version" )
+				{
+					/* Special output formatting for 'version' column */
+					$row[] = ($aRow[ $aColumns[$i] ]=="0") ? '-' : $aRow[ $aColumns[$i] ];
+				}
+				else if ( $aColumns[$i] != ' ')
+				{
+					/* General output */
+					$row[] = $aRow[ $aColumns[$i] ];
+				}
+			}
+			$output['aaData'][] = $row;
+		}
     }
      
     echo json_encode( $output );

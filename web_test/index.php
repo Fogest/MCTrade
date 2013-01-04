@@ -70,7 +70,6 @@ if($id){
 	<th>Item</th>
 	<th>Quantity</th>
 	<th>Price</th>
-	<th class="last-th center-th">Trade Status(opened/closed)</th>
 	</tr>
 	</thead>
 	<tbody>
