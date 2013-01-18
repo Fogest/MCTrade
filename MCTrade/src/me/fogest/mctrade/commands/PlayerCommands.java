@@ -278,6 +278,8 @@ public class PlayerCommands implements CommandExecutor {
 
 	private void prepareTrade(Player player) {
 		setItemId(player.getItemInHand().getTypeId());
+		ItemStack stackTest = player.getItemInHand();
+		stackTest.getType();
 		setItemAmount(player.getItemInHand().getAmount());
 		setItemMaterial(player.getItemInHand().getType());
 		userId = DatabaseManager.getUserId(player.getName());
@@ -304,22 +306,22 @@ public class PlayerCommands implements CommandExecutor {
 	}
 
 	public int getItemDurability(ItemStack item) {
-		double itemMax = item.getType().getMaxDurability();
-		double itemDur = item.getDurability();
-		if (itemDur != 0) {
-
-			double percent = (itemDur / itemMax) * 100;
-			m.tellAll("Item max durability is: " + itemMax);
-			m.tellAll("Item current durability is: " + itemDur);
-			m.tellAll("Percent with multiplication is: " + percent);
-
-			itemDurability = (int) Math.round(percent);
-			m.tellAll("Rounded percent with multiplication is: " + itemDurability);
-			return itemDurability;
-		} else if (itemDur == 0) {
-			return 100;
-		}
-		return 0;
+//		double itemMax = item.getType().getMaxDurability();
+//		double itemDur = item.getDurability();
+//		if (itemDur != 0) {
+//
+//			double percent = (itemDur / itemMax) * 100;
+//			m.tellAll("Item max durability is: " + itemMax);
+//			m.tellAll("Item current durability is: " + itemDur);
+//			m.tellAll("Percent with multiplication is: " + percent);
+//
+//			itemDurability = (int) Math.round(percent);
+//			m.tellAll("Rounded percent with multiplication is: " + itemDurability);
+//			return itemDurability;
+//		} else if (itemDur == 0) {
+//			return 100;
+//		}
+		return (int) item.getDurability();
 	}
 
 	public void setItemAmount(int itemAmount) {
