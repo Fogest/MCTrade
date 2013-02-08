@@ -19,6 +19,8 @@ public enum Msg {
 	TRADE_ACCEPT_USAGE("Please enter the trade ID using /mctrade accept <id>"),
 	TRADE_NOT_ENOUGH_ITEMS("Sorry, you don't have that much of that item!"),
 	TRADE_AIR("I know air is cool an all, but I just cannot let you sell that :)"),
+	TRADE_CREATION_SUCCESS("Your trade has been created successfully!"),
+	NOT_ENOUGH_MONEY("It appears you do not have sufficent funds for this action!"),
 	PERMISSION_DENIED("Sorry, but you don't have the correct permissions for this command!"),
 	USERID_GET_ERROR("Error getting userId. This may be a database error! Inform a staff member of this issue!"),
 	ALREADY_VERIFIED("No need to verify again, our records indicate you already have been verified"),

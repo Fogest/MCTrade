@@ -31,6 +31,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.fogest.mctrade.DatabaseManager;
@@ -38,6 +39,7 @@ import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.MessageHandler;
 import me.fogest.mctrade.Msg;
 import me.fogest.mctrade.AcceptTrade;
+import me.fogest.mctrade.Trade;
 
 public class PlayerCommands implements CommandExecutor {
 	private int itemId;
@@ -113,96 +115,37 @@ public class PlayerCommands implements CommandExecutor {
 	}
 
 	private void AcceptTrade(Player player, String[] args) {
-		if (args.length == 2 && args[1].matches("[0-9]+")) {
-			id = Integer.parseInt(args[1]);
-			String mcTrader = DatabaseManager.getTradeUsername(id);
-			if (!(mcTrader.equals(player.getName()))) {
-
-				if (MCTrade.checkIP == true) {
-					if (!(player.getAddress().getAddress().getHostAddress().equals(DatabaseManager.getTraderIP(id)))) {
-						tradeGo = false;
-					} else {
-						tradeGo = true;
-					}
-				}
-
-				if (tradeGo == true) {
-					tradeStatus = DatabaseManager.getTradeStatus(id);
-					if (tradeStatus == 1) {
-						double cost = DatabaseManager.getItemCost(id);
-						if (MCTrade.econ.getBalance(player.getName()) >= cost) {
-							AcceptTrade accept = new AcceptTrade(Integer.parseInt(args[1]), player, m);
-							m.tellPlayer(player, "You have sucessfully purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s");
-							m.tellAll(""+ player.getName() + " has purchased " + accept.getAmount() + " " + accept.getTradeItem() + "'s [" + accept.getTradeId() + "]");
-							MCTrade.econ.withdrawPlayer(player.getName(), (cost));
-							MCTrade.econ.depositPlayer(DatabaseManager.getTradeUsername(id), (cost));
-						} else {
-							m.tellPlayer(player, "Sorry, that trade costs: " + cost + " and you only have: " + MCTrade.econ.getBalance(player.getName()));
-						}
-					} else if (tradeStatus == 2) {
-						m.tellPlayer(player, Msg.TRADE_ALREADY_ACCEPTED);
-					} else if (tradeStatus == 3) {
-						m.tellPlayer(player, Msg.TRADE_ALREADY_HIDDEN);
-					}
-				} else {
-					m.tellPlayer(player, Msg.TRADE_CANNOT_ACCEPT_OWN);
-				}
-			} else {
-				m.tellPlayer(player, Msg.TRADE_CANNOT_ACCEPT_OWN);
-			}
-		} else {
-			m.tellPlayer(player, Msg.TRADE_ACCEPT_USAGE);
-		}
+		
 	}
 
-	private void CreateTrade(Player player, String[] args) {
-		if (!(getItemMaterial().toString().equals("AIR"))) {
-			if (args.length == 2 && args[1].matches("[0-9]+")) {
-				int tempItemAmount = Integer.parseInt(args[1]);
-				if (checkItemMax(player) >= tempItemAmount) {
-					setItemAmount(tempItemAmount);
-					trade = true;
-				} else {
-					trade = false;
-				}
-			}
-			int price = Integer.parseInt(args[0]);
-			taxAmount = (price * tax);
-			double balance = (MCTrade.econ.getBalance(player.getName()));
-			int tId = 0;
-			int itemDur = getItemDurability(player.getItemInHand());
-			if (trade == true && balance >= taxAmount) {
-				if (args.length >= 2) {
-					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(),
-							DatabaseManager.encodeEnchantments(player, player.getItemInHand()), args[0], player.getAddress().getAddress().getHostAddress());
-					removeItem(player, player.getItemInHand(), Integer.parseInt(args[1]));
-
-				} else if (args.length < 2) {
-					MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
-					tId = DatabaseManager.createTrade(player.getName(), getItemId(), getItemMaterial().toString(), itemDur, getItemAmount(),
-							DatabaseManager.encodeEnchantments(player, player.getItemInHand()), args[0], player.getAddress().getAddress().getHostAddress());
-					removeItem(player, player.getItemInHand());
-				}
-
-				m.tellAll(player.getName() + " has created a new trade (" + tId + ")");
-				if (itemDur == 101) {
-					m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY + price);
-				} else {
-					m.tellAll("Item: " + ChatColor.GRAY + getItemMaterial() + ChatColor.WHITE + " Amount: " + ChatColor.GRAY + getItemAmount() + ChatColor.WHITE + " Price: " + ChatColor.GRAY + price
-							+ ChatColor.WHITE + "Durability: " + ChatColor.GRAY + itemDur);
-				}
-				m.tellPlayer(player, "You have been charged " + taxAmount + " for the creation of this trade!");
-			} else if (trade == false) {
-				m.tellPlayer(player, Msg.TRADE_NOT_ENOUGH_ITEMS);
-			} else if (balance < taxAmount) {
-				m.tellPlayer(player,
-						"To prevent abuse, tax is charged on your item, on purchase rather then when your trade is accepted. Tax is based on the price you set the trade at and the tax for this one is: "
-								+ taxAmount + "And you only have " + balance);
-			}
-		} else {
+	private boolean CreateTrade(Player player, String[] args) {
+		prepareTrade(player);
+		if(getItemMaterial().toString().equals("AIR")) {
 			m.tellPlayer(player, Msg.TRADE_AIR);
+			return false;
 		}
+		int cost = Integer.parseInt(args[1]);
+		if (args.length == 2 && args[1].matches("[0-9]+")) {
+			Trade trade = new Trade(player.getItemInHand(), getItemMaterial().toString(), player.getName(), cost, 1);
+			taxAmount = (cost * tax);
+			double balance = (MCTrade.econ.getBalance(player.getName()));
+			
+			if(balance >= taxAmount) {
+				int id = DatabaseManager.createTrade(trade);
+				m.tellAll(player.getName() + " has created a new trade (#" + id + ")");
+				m.tellPlayer(player, Msg.TRADE_CREATION_SUCCESS);
+				m.tellPlayer(player, "Tax charged: " + taxAmount);
+				m.tellAll("Selling: " + trade.getAmount() + " " + trade.getItemName() + " for " + trade.getCost());
+				m.tellAll("Type /mct accept " + id + " to accept this trade!");
+				return true;
+			} else {
+				m.tellPlayer(player, Msg.NOT_ENOUGH_MONEY);
+				m.tellPlayer(player, "Trade Creation fee is: " + taxAmount);
+				return false;
+			}
+		}
+		m.tellPlayer(player, Msg.COMMAND_USAGE);
+		return false;
 	}
 
 	// Checks global mctrade permissions
@@ -278,11 +221,8 @@ public class PlayerCommands implements CommandExecutor {
 
 	private void prepareTrade(Player player) {
 		setItemId(player.getItemInHand().getTypeId());
-		ItemStack stackTest = player.getItemInHand();
-		stackTest.getType();
 		setItemAmount(player.getItemInHand().getAmount());
 		setItemMaterial(player.getItemInHand().getType());
-		userId = DatabaseManager.getUserId(player.getName());
 	}
 
 	public int getItemId() {
@@ -305,23 +245,8 @@ public class PlayerCommands implements CommandExecutor {
 		return itemAmount;
 	}
 
-	public int getItemDurability(ItemStack item) {
-//		double itemMax = item.getType().getMaxDurability();
-//		double itemDur = item.getDurability();
-//		if (itemDur != 0) {
-//
-//			double percent = (itemDur / itemMax) * 100;
-//			m.tellAll("Item max durability is: " + itemMax);
-//			m.tellAll("Item current durability is: " + itemDur);
-//			m.tellAll("Percent with multiplication is: " + percent);
-//
-//			itemDurability = (int) Math.round(percent);
-//			m.tellAll("Rounded percent with multiplication is: " + itemDurability);
-//			return itemDurability;
-//		} else if (itemDur == 0) {
-//			return 100;
-//		}
-		return (int) item.getDurability();
+	public short getItemDurability(ItemStack item) {
+		return item.getDurability();
 	}
 
 	public void setItemAmount(int itemAmount) {

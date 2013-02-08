@@ -78,10 +78,10 @@ public class DatabaseManager {
 			}
 		}
 		if (!db.checkTable("MCTrade_trades")) {
-			String queryString = "CREATE TABLE IF NOT EXISTS `mctrade_trades` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`Minecraft_Username` text NOT NULL,"
+			String queryString = "CREATE TABLE IF NOT EXISTS `mctrade_trades` ( " + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT, " + "`Minecraft_Username` text NOT NULL,"
 					+ "`Block_ID` int(5) NOT NULL," + "`Block_Name` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL," + "`Durability` int(11) NOT NULL," + "`Quantity` int(3) NOT NULL,"
-					+ "`Enchantment` text NOT NULL," + "`Cost` text NOT NULL," + "`TradeNotes` text NOT NULL," + "`IP` text NOT NULL,"
-					+ "`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade'," + "PRIMARY KEY (`id`))";
+					+ "`Enchantment` text NOT NULL," + "`Cost` double NOT NULL," + "`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade',"
+					+ "PRIMARY KEY (`id`)";
 			try {
 				db.query(queryString);
 				MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the trades table.");
@@ -173,20 +173,18 @@ public class DatabaseManager {
 		return userId;
 	}
 
-	public static int createTrade(String player, int blockId, String block, int durability, int amount,String enchant, String cost, String Ip) {
-		String username = getUsername(player);
+	public static int createTrade(Trade trade) {
 		int id = 0;
 		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,?,?,'1')");
-			ps.setString(1, player);
-			ps.setInt(2, blockId);
-			ps.setString(3, block);
-			ps.setInt(4, durability);
-			ps.setInt(5, amount);
-			ps.setString(6, enchant);
-			ps.setString(7, cost);
-			ps.setString(8, "Trade Created using MCTrade Plugin");
-			ps.setString(9, Ip);
+			PreparedStatement ps = db.getConnection().prepareStatement("INSERT INTO mctrade_trades VALUES (NULL,?,?,?,?,?,?,?,?)");
+			ps.setString(1, trade.getUsername());
+			ps.setInt(2, trade.getItemId());
+			ps.setString(3, trade.getItemName());
+			ps.setInt(4, trade.getDurability());
+			ps.setInt(5, trade.getAmount());
+			ps.setString(6, trade.getEnchant());
+			ps.setDouble(7, trade.getCost());
+			ps.setInt(8, trade.getStatus());
 			ps.executeUpdate();
 			ps.close();
 			ps = db.getConnection().prepareStatement("SELECT MAX(id) FROM mctrade_trades");
@@ -201,6 +199,28 @@ public class DatabaseManager {
 			e.printStackTrace();
 		}
 		return id;
+	}
+
+	public static Trade getTrade(int id) {
+		Trade trade = null;
+		if (!db.checkConnection())
+			return null;
+		try {
+			PreparedStatement ps = db.getConnection().prepareStatement(
+					"SELECT `id`,'Minecraft_Username', 'Block_ID', 'Block_Name', 'Durability', 'Quantity', 'Enchantment', 'Cost', 'Trade_Status' FROM `mctrade_trades` WHERE `id` = ? LIMIT 1");
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				ItemStack stack = new ItemStack(rs.getInt("Block_ID"), rs.getInt("Quantity"), rs.getShort("Durability"));
+				decodeEnchantments(stack,rs.getString("Enchantment"));
+				trade = new Trade(stack, rs.getString("Block_Name"),rs.getString("Minecraft_Username"), rs.getInt("Cost"), rs.getInt("Trade_Status"));
+			}
+			ps.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return trade;
 	}
 
 	public static void acceptTrade(int id) {
@@ -263,139 +283,6 @@ public class DatabaseManager {
 		}
 	}
 
-	public static String getTradeUsername(int id) {
-		String tradeUsername = "";
-		if (!db.checkConnection())
-			return "";
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Minecraft_Username` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				tradeUsername = rs.getString("Minecraft_Username");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tradeUsername;
-	}
-
-	public static int getTradeStatus(int id) {
-		int tradeStatus = 0;
-		if (!db.checkConnection())
-			return 0;
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Trade_Status` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				tradeStatus = rs.getInt("Trade_Status");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tradeStatus;
-	}
-
-	public static int getTradeItemId(int id) {
-		int tradeItemId = 0;
-		if (!db.checkConnection())
-			return 0;
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Block_ID` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				tradeItemId = rs.getInt("Block_ID");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tradeItemId;
-	}
-
-	public static String getTradeItem(int id) {
-		String tradeItem = "";
-		if (!db.checkConnection())
-			return "";
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Block_Name` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				tradeItem = rs.getString("Block_Name");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tradeItem;
-	}
-
-	public static int getItemCost(int id) {
-		int tradeCost = 0;
-		if (!db.checkConnection())
-			return 0;
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Cost` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				tradeCost = rs.getInt("Cost");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tradeCost;
-	}
-
-	public static int getItemDur(int id) {
-		int tradeCost = 0;
-		if (!db.checkConnection())
-			return 0;
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Durability` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				tradeCost = rs.getInt("Durability");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tradeCost;
-	}
-
-	public static int getTradeAmount(int id) {
-		int tradeAmount = 0;
-		if (!db.checkConnection())
-			return 0;
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Quantity` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				tradeAmount = rs.getInt("Quantity");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return tradeAmount;
-	}
-
 	public static String getEnchantments(int id) {
 		String enchantment = "";
 		if (!db.checkConnection())
@@ -450,7 +337,7 @@ public class DatabaseManager {
 	}
 
 	// decode enchantments from database
-	public static boolean decodeEnchantments(Player p, ItemStack stack, String enchStr) {
+	public static boolean decodeEnchantments(ItemStack stack, String enchStr) {
 		if (enchStr == null || enchStr.isEmpty())
 			return false;
 		Map<Enchantment, Integer> ench = new HashMap<Enchantment, Integer>();
@@ -489,8 +376,6 @@ public class DatabaseManager {
 			// add enchantment to map
 			ench.put(enchantment, level);
 		}
-		if (removedUnsafe)
-			p.sendMessage("removed_enchants");
 		// add enchantments to stack
 		stack.addEnchantments(ench);
 		return removedUnsafe;
