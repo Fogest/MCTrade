@@ -78,10 +78,7 @@ public class DatabaseManager {
 			}
 		}
 		if (!db.checkTable("MCTrade_trades")) {
-			String queryString = "CREATE TABLE IF NOT EXISTS `mctrade_trades` ( " + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT, " + "`Minecraft_Username` text NOT NULL,"
-					+ "`Block_ID` int(5) NOT NULL," + "`Block_Name` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL," + "`Durability` int(11) NOT NULL," + "`Quantity` int(3) NOT NULL,"
-					+ "`Enchantment` text NOT NULL," + "`Cost` double NOT NULL," + "`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade',"
-					+ "PRIMARY KEY (`id`)";
+			String queryString = "CREATE TABLE IF NOT EXISTS `mctrade_trades` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT,`Minecraft_Username` text NOT NULL,`Block_ID` int(5) NOT NULL,`Block_Name` text CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,`Durability` int(11) NOT NULL,`Quantity` int(3) NOT NULL,`Enchantment` text NOT NULL,`Cost` double NOT NULL,`Trade_Status` int(11) NOT NULL COMMENT '1 = Open Trade, 2 = Closed Trade, 3 = Hidden Trade',PRIMARY KEY (`id`))";
 			try {
 				db.query(queryString);
 				MCTrade.getPlugin().getLogger().log(Level.INFO, "Successfully created the trades table.");
@@ -182,7 +179,7 @@ public class DatabaseManager {
 			ps.setString(3, trade.getItemName());
 			ps.setInt(4, trade.getDurability());
 			ps.setInt(5, trade.getAmount());
-			ps.setString(6, trade.getEnchant());
+			ps.setString(6, encodeEnchantments(trade.getItem()));
 			ps.setDouble(7, trade.getCost());
 			ps.setInt(8, trade.getStatus());
 			ps.executeUpdate();
@@ -207,13 +204,13 @@ public class DatabaseManager {
 			return null;
 		try {
 			PreparedStatement ps = db.getConnection().prepareStatement(
-					"SELECT `id`,'Minecraft_Username', 'Block_ID', 'Block_Name', 'Durability', 'Quantity', 'Enchantment', 'Cost', 'Trade_Status' FROM `mctrade_trades` WHERE `id` = ? LIMIT 1");
+					"SELECT `id`,`Minecraft_Username`, `Block_ID`, `Block_Name`, `Durability`, `Quantity`, `Enchantment`, `Cost`, `Trade_Status` FROM `mctrade_trades` WHERE `id` = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
 				ItemStack stack = new ItemStack(rs.getInt("Block_ID"), rs.getInt("Quantity"), rs.getShort("Durability"));
-				decodeEnchantments(stack,rs.getString("Enchantment"));
-				trade = new Trade(stack, rs.getString("Block_Name"),rs.getString("Minecraft_Username"), rs.getInt("Cost"), rs.getInt("Trade_Status"));
+				decodeEnchantments(stack, rs.getString("Enchantment"));
+				trade = new Trade(stack, rs.getString("Block_Name"), rs.getString("Minecraft_Username"), rs.getInt("Cost"), rs.getInt("Trade_Status"));
 			}
 			ps.close();
 			rs.close();
@@ -303,7 +300,7 @@ public class DatabaseManager {
 	}
 
 	// encode/decode enchantments for database storage
-	public static String encodeEnchantments(Player p, ItemStack stack) {
+	public static String encodeEnchantments(ItemStack stack) {
 		if (stack == null)
 			return "";
 		Map<Enchantment, Integer> enchantments = stack.getEnchantments();
@@ -321,8 +318,6 @@ public class DatabaseManager {
 			}
 			enchMap.put(entry.getKey().getId(), level);
 		}
-		if (removedUnsafe && p != null)
-			p.sendMessage("removed_enchants");
 		// sort by enchantment id
 		SortedSet<Integer> enchSorted = new TreeSet<Integer>(enchMap.keySet());
 		// build string

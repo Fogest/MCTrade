@@ -39,19 +39,12 @@ import me.fogest.mctrade.Trade;
 public class PlayerCommands implements CommandExecutor {
 	private int itemId;
 	private int itemAmount;
-	private int itemDurability;
 	private Material itemMaterial;
 	private MessageHandler m;
 
 	private double tax = MCTrade.tax;
 	private double taxAmount;
-	private String webURL = MCTrade.webAddress;
-	private String longLink = webURL + "registration.php";
-
-	private boolean trade = true;
-	private boolean tradeGo = true;
-
-	private int userId, id, tradeStatus;
+	private int userId, id;
 
 	// Command Handlers
 
@@ -150,7 +143,7 @@ public class PlayerCommands implements CommandExecutor {
 			player.getWorld().dropItemNaturally(player.getLocation(), (ItemStack) pairs.getValue());
 			it.remove();
 		}
-		
+		DatabaseManager.acceptTrade(id);
 		m.tellAll(player.getName() + " accepted trade " + id + " giving them " + trade.getAmount() + " " + trade.getItemName());
 		m.tellPlayer(player, "Your trade has been processed and items awarded! " + trade.getCost() + " has been removed from your account");
 		
@@ -171,18 +164,20 @@ public class PlayerCommands implements CommandExecutor {
 			m.tellPlayer(player, Msg.TRADE_AIR);
 			return false;
 		}
-		int cost = Integer.parseInt(args[1]);
+		int cost = Integer.parseInt(args[0]);
 		Trade trade = new Trade(player.getItemInHand(), getItemMaterial().toString(), player.getName(), cost, 1);
 		taxAmount = (cost * tax);
 		double balance = (MCTrade.econ.getBalance(player.getName()));
 		// Confirming that a user has enough money to pay tax on trade.
 		if (balance >= taxAmount) {
 			int id = DatabaseManager.createTrade(trade);
+			player.getInventory().remove(trade.getItem());
+			MCTrade.econ.withdrawPlayer(player.getName(), taxAmount);
 			m.tellAll(player.getName() + " has created a new trade (#" + id + ")");
-			m.tellPlayer(player, Msg.TRADE_CREATION_SUCCESS);
-			m.tellPlayer(player, "Tax charged: " + taxAmount);
 			m.tellAll("Selling: " + trade.getAmount() + " " + trade.getItemName() + " for " + trade.getCost());
 			m.tellAll("Type /mct accept " + id + " to accept this trade!");
+			m.tellPlayer(player, Msg.TRADE_CREATION_SUCCESS);
+			m.tellPlayer(player, "Tax charged: " + taxAmount);
 			return true;
 		} else {
 			m.tellPlayer(player, Msg.NOT_ENOUGH_MONEY);
@@ -222,10 +217,6 @@ public class PlayerCommands implements CommandExecutor {
 			}
 		}
 		return amount;
-	}
-
-	public void removeItem(Player player, ItemStack playerStack) {
-		player.getInventory().removeItem(playerStack);
 	}
 
 	public void removeItem(Player player, ItemStack playerStack, int amount) {

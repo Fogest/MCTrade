@@ -1,5 +1,8 @@
 package me.fogest.mctrade;
 
+import java.util.Map;
+
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class Trade {
@@ -18,26 +21,23 @@ public class Trade {
 	
 	private ItemStack item;
 	public Trade(ItemStack item, String itemName, String username, double cost, int status) {
-		this.setItemId(itemId);
-		this.setDurability(durability);
-		this.setAmount(amount);
-		this.setStatus(status);
+		this.setItem(item);
 		this.setItemName(itemName);
 		this.setUsername(username);
 		this.setCost(cost);
-		this.setItem(item);
+		this.setStatus(status);
 	}
 
 	public int getItemId() {
-		return itemId;
+		return item.getTypeId();
 	}
 
 	public void setItemId(int itemId) {
 		this.itemId = itemId;
 	}
 
-	public int getDurability() {
-		return durability;
+	public short getDurability() {
+		return item.getDurability();
 	}
 
 	public void setDurability(int durability) {
@@ -45,7 +45,7 @@ public class Trade {
 	}
 
 	public int getAmount() {
-		return amount;
+		return item.getAmount();
 	}
 
 	public void setAmount(int amount) {
@@ -68,8 +68,8 @@ public class Trade {
 		this.username = username;
 	}
 
-	public String getEnchant() {
-		return enchant;
+	public Map<Enchantment, Integer> getEnchant() {
+		return item.getEnchantments();
 	}
 
 	public void setEnchant(String enchant) {
