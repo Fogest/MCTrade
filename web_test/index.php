@@ -10,10 +10,8 @@ include 'assets/php/functions.php';
 <body>
 
 <?php 
-$bodyTitle = "Home";
-$bodySubTitle = "Your home!";
-$bodyLocation = "Home";
-$bodyTab = "home";
+$_SESSION['bodyTitle'] = "Home";
+$_SESSION['bodyTab'] = "home";
 include_once 'assets/php/body-head.php'?>
 
 <!-- Content -->
@@ -64,11 +62,12 @@ if($id){
 	<table class="table table-hover table-bordered table-striped" id="trades">
 	<thead>
 	<tr>
-	<th class="first-th">Trade ID</th>
-	<th>Minecraft Username</th>
+		<th class="first-th" width="10%">Trade ID</th>
+	<th width="20%">Minecraft Username</th>
 	<th>Item</th>
-	<th>Quantity</th>
-	<th>Price</th>
+	<th width="10%">Durability</th>
+	<th width="10%">Quantity</th>
+	<th width="15%">Price</th>
 	</tr>
 	</thead>
 	<tbody>

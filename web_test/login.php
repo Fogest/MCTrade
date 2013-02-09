@@ -9,10 +9,8 @@ include 'assets/php/functions.php';
 <body>
 
 <?php 
-$bodyTitle = "Login";
-$bodySubTitle = "Login Page";
-$bodyLocation = "Login";
-$bodyTab = "login";
+$_SESSION['bodyTitle'] = "Login";
+$_SESSION['bodyTab'] = "login";
 include_once 'assets/php/body-head.php'?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 										 CONTENT

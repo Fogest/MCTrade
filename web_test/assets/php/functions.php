@@ -1,10 +1,25 @@
 <?php
 //Session
 session_start();
-include './CONFIG.php';
-//Connect to database
-mysql_connect($hostname,$username,$password) or die();
-mysql_select_db($database) or die();
+include 'CONFIG.php';
+
+function fatal_error ( $sErrorMessage = '' )
+{
+	header( $_SERVER['SERVER_PROTOCOL'] .' 500 Internal Server Error' );
+	die( $sErrorMessage );
+}
+/*
+ * MySQL connection
+ */
+if ( ! $gaSql['link'] = mysql_pconnect( $hostname, $username, $password  ) )
+{
+	fatal_error( 'Could not open connection to server' );
+}
+
+if ( ! mysql_select_db( $database, $gaSql['link'] ) )
+{
+	fatal_error( 'Could not select database ' );
+}
 
 //Login check function
 function loggedin()
