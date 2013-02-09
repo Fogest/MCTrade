@@ -279,26 +279,6 @@ public class DatabaseManager {
 			}
 		}
 	}
-
-	public static String getEnchantments(int id) {
-		String enchantment = "";
-		if (!db.checkConnection())
-			return "";
-		try {
-			PreparedStatement ps = db.getConnection().prepareStatement("SELECT `Enchantment` FROM `mctrade_trades` WHERE `id` = ?");
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				enchantment = rs.getString("Enchantment");
-			}
-			ps.close();
-			rs.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return enchantment;
-	}
-
 	// encode/decode enchantments for database storage
 	public static String encodeEnchantments(ItemStack stack) {
 		if (stack == null)
@@ -399,10 +379,6 @@ public class DatabaseManager {
 			level = enchantment.getMaxLevel();
 		}
 		return level;
-	}
-
-	public static String getTraderIP(int id) {
-		return "";
 	}
 
 	public static boolean resetDB() {
