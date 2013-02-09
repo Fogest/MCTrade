@@ -20,25 +20,20 @@ package me.fogest.mctrade.commands;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import org.bukkit.ChatColor;
+import java.util.Map.Entry;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.fogest.mctrade.DatabaseManager;
 import me.fogest.mctrade.MCTrade;
 import me.fogest.mctrade.MessageHandler;
 import me.fogest.mctrade.Msg;
-import me.fogest.mctrade.AcceptTrade;
 import me.fogest.mctrade.Trade;
 
 public class PlayerCommands implements CommandExecutor {
@@ -114,38 +109,86 @@ public class PlayerCommands implements CommandExecutor {
 		return false;
 	}
 
-	private void AcceptTrade(Player player, String[] args) {
+	/**
+	 * @param player
+	 *            The player creating the command
+	 * @param args
+	 *            The command arguments
+	 * @return true if success, false if error
+	 */
+	private boolean AcceptTrade(Player player, String[] args) {
+		if (!(args.length == 2 && args[1].matches("[0-9]+")))
+			return false;
+		id = Integer.parseInt(args[1]);
+		Trade trade = DatabaseManager.getTrade(id);
+		// Checking if user is trying to accept own trade.
+		if (trade.getUsername().equals(player.getName())) {
+			m.tellPlayer(player, Msg.TRADE_CANNOT_ACCEPT_OWN);
+			return false;
+		}
+		// Checking trade status to make sure it is still open!
+		if (trade.getStatus() != 1) {
+			if (trade.getStatus() == 2)
+				m.tellPlayer(player, Msg.TRADE_ALREADY_ACCEPTED);
+			else if (trade.getStatus() == 3)
+				m.tellPlayer(player, Msg.TRADE_ALREADY_HIDDEN);
+			return false;
+		}
 		
+		if(MCTrade.econ.getBalance(player.getName()) < trade.getCost()) {
+			m.tellPlayer(player, "Sorry, that trade costs: " + trade.getCost() + " and you only have: " + MCTrade.econ.getBalance(player.getName()));
+			return false;
+		}
+		MCTrade.econ.withdrawPlayer(player.getName(), trade.getCost());
+		MCTrade.econ.depositPlayer(trade.getUsername(), trade.getCost());
+		
+		//Give items	
+		HashMap<Integer, ItemStack> extra = player.getInventory().addItem(trade.getItem());
+		Iterator<Entry<Integer, ItemStack>> it = extra.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pairs = (Map.Entry) it.next();
+			player.getWorld().dropItemNaturally(player.getLocation(), (ItemStack) pairs.getValue());
+			it.remove();
+		}
+		
+		m.tellAll(player.getName() + " accepted trade " + id + " giving them " + trade.getAmount() + " " + trade.getItemName());
+		m.tellPlayer(player, "Your trade has been processed and items awarded! " + trade.getCost() + " has been removed from your account");
+		
+		return true;
 	}
 
+	/**
+	 * @param player
+	 *            The player creating the command
+	 * @param args
+	 *            The command arguments
+	 * @return false if command fails, true if success
+	 */
 	private boolean CreateTrade(Player player, String[] args) {
 		prepareTrade(player);
-		if(getItemMaterial().toString().equals("AIR")) {
+		// Checking if trying to trade air (empty hand)
+		if (getItemMaterial().toString().equals("AIR")) {
 			m.tellPlayer(player, Msg.TRADE_AIR);
 			return false;
 		}
 		int cost = Integer.parseInt(args[1]);
-		if (args.length == 2 && args[1].matches("[0-9]+")) {
-			Trade trade = new Trade(player.getItemInHand(), getItemMaterial().toString(), player.getName(), cost, 1);
-			taxAmount = (cost * tax);
-			double balance = (MCTrade.econ.getBalance(player.getName()));
-			
-			if(balance >= taxAmount) {
-				int id = DatabaseManager.createTrade(trade);
-				m.tellAll(player.getName() + " has created a new trade (#" + id + ")");
-				m.tellPlayer(player, Msg.TRADE_CREATION_SUCCESS);
-				m.tellPlayer(player, "Tax charged: " + taxAmount);
-				m.tellAll("Selling: " + trade.getAmount() + " " + trade.getItemName() + " for " + trade.getCost());
-				m.tellAll("Type /mct accept " + id + " to accept this trade!");
-				return true;
-			} else {
-				m.tellPlayer(player, Msg.NOT_ENOUGH_MONEY);
-				m.tellPlayer(player, "Trade Creation fee is: " + taxAmount);
-				return false;
-			}
+		Trade trade = new Trade(player.getItemInHand(), getItemMaterial().toString(), player.getName(), cost, 1);
+		taxAmount = (cost * tax);
+		double balance = (MCTrade.econ.getBalance(player.getName()));
+		// Confirming that a user has enough money to pay tax on trade.
+		if (balance >= taxAmount) {
+			int id = DatabaseManager.createTrade(trade);
+			m.tellAll(player.getName() + " has created a new trade (#" + id + ")");
+			m.tellPlayer(player, Msg.TRADE_CREATION_SUCCESS);
+			m.tellPlayer(player, "Tax charged: " + taxAmount);
+			m.tellAll("Selling: " + trade.getAmount() + " " + trade.getItemName() + " for " + trade.getCost());
+			m.tellAll("Type /mct accept " + id + " to accept this trade!");
+			return true;
+		} else {
+			m.tellPlayer(player, Msg.NOT_ENOUGH_MONEY);
+			m.tellPlayer(player, "Trade Creation fee is: " + taxAmount);
+			return false;
 		}
-		m.tellPlayer(player, Msg.COMMAND_USAGE);
-		return false;
 	}
 
 	// Checks global mctrade permissions
@@ -213,6 +256,7 @@ public class PlayerCommands implements CommandExecutor {
 		}
 		player.getInventory().setContents(contents);
 	}
+	
 
 	public boolean onTradeRemoveItem(ItemStack is, Player p) {
 		p.getInventory().removeItem(is);
